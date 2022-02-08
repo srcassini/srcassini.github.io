@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>false on Shaun Cassini</title>
+    <link>http://shauncassini.github.io/tags/false/</link>
+    <description>Recent content in false on Shaun Cassini</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 23 Jan 2022 18:49:42 +0000</lastBuildDate><atom:link href="http://shauncassini.github.io/tags/false/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using an Actor-Critic agent to Complete Peg Solitaire</title>
+      <link>http://shauncassini.github.io/posts/solitaire/</link>
+      <pubDate>Sun, 23 Jan 2022 18:49:42 +0000</pubDate>
+      
+      <guid>http://shauncassini.github.io/posts/solitaire/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,117 @@
+a:hover {
+    color: #FF6266;
+}
+
+.button.holder {
+    width: 100%;
+    padding-top: 10px;
+    display:inline-block;
+    
+}
+
+.button.link {
+    transform: translate(0px, 0px);
+    box-shadow: 0px 0px grey;
+    transition: color 0.1s, background-color 0.1s, transform 0.1s, box-shadow 0.1s;    
+}
+.button.link:hover {
+    background-color: #FF6266;
+    color: #211F28;
+    transform: translate(3px, -3px);
+    box-shadow: -4px 4px grey;
+    transition: background-color 0.2s, color 0.2S, transform 0.2s, box-shadow 0.2s; 
+}
+
+.button.shuffled {
+    margin-left: 30%;
+    user-select: none;
+    margin-right: 30%;
+    width: 40%;
+    text-align: center;
+    height: 40px;
+    cursor: pointer;
+    outline: none;
+    /* color: #211F28;
+    background-color: #ED6C6B; */
+    
+    border-style: solid;
+    border-width: 2px;
+    border-color: #FF6266;
+    /* box-shadow: 0 3px #999;  */
+}
+
+.button.shuffled:hover {
+    color: #211F28;
+    background-color: #FF6266;
+}
+
+.button:active {
+    /* background-color: #3e8e41; */
+    transform: translateY(4px);
+}
+
+
+#first, #third {
+    width: 25%; /* The width is 20%, by default */
+    height: 50px;
+  }
+
+#second {
+    width: 25%; /* The width is 60%, by default */
+    height: 50px;
+}
+
+/* Use a media query to add a breakpoint at 800px: */
+@media screen and (max-width: 600px) {
+    #first, #second, #third {
+        width: 25%; /* The width is 100%, when the viewport is 800px or smaller */
+    }
+    .button.shuffled {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.post-rating {
+    font-size: 13pt;
+}
+
+.post-title.main {
+    text-align: center;
+    font-size: 30pt;
+}
+
+.section-title.main {
+    font-size: 25pt;
+    text-align: center;
+    color:#FF6266;
+}
+
+.section-title.main.words {
+    margin-top: 20pt;
+}
+
+/* Hexagon Stuff */
+
+.post.image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+}
+
+.code-toolbar {
+    border-left: none;
+    border-right: none;
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+
+.highlight:focus {
+  background-color: red;
+}
+
+h2 {
+  color: #FF6266;
+}
