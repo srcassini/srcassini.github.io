@@ -1,4 +1,4 @@
-baseURL = 'https://shauncassini.github.io/'
+baseURL = 'https://srcassini.github.io/'
 title = "Shaun Cassini"
 theme = "terminal"
 paginate = 5
