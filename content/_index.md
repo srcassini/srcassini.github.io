@@ -13,7 +13,7 @@ This, and (soon!) much more, you can read about in posts on this site. Check out
 <div class='button holder'>
 
   <div id='first' class="button link">LinkedIn</div>
-  <div id='second' class="button link">CV</div> 
+  <div id='second' class="button link"><a href='./docs/Shaun_Cassini_CV.pdf ' target="_blank" rel="noopener noreferrer">CV</a></div> 
   <div id='third' class="button link">GitHub</div>
 
 </div>
@@ -60,11 +60,11 @@ This, and (soon!) much more, you can read about in posts on this site. Check out
 			// audio.play();
 	}
 
-	cv.onclick = function (){
-			window.open('https://www.google.com/', '_blank');
-			// var audio = new Audio('toot2.m4a');
-			// audio.play();
-	}
+	// cv.onclick = function (){
+	// 		window.open('https://www.google.com/', '_blank');
+	// 		// var audio = new Audio('toot2.m4a');
+	// 		// audio.play();
+	// }
 
 	github.onclick = function () {
 			window.open('https://github.com/shauncassini', '_blank');
