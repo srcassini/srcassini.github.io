@@ -421,9 +421,9 @@ If we assume that a population's fitness distribution is Gaussian, maybe the con
 
 ## Wrapping up
 
-Clifford W. Adams started work on finding a mathematical solution to the Hexagon in 1910 and eventually solved it in 1957. He saw the puzzle in a mathematical journal, wondered how it worked, and proceeded to go down a 47-year-deep rabbit hole. Our EA found solved the puzzle in less than a second, but solutions have fractal borders. I ended up ending more questions than I came in with. I hope that someday I'll write a follow-up to this problem after a *lot* more background. If you're curious to poke around at the algorithm yourself, [feel free](). I'd love to see what you come up with!
+Clifford W. Adams started work on finding a mathematical solution to the Hexagon in 1910 and eventually solved it in 1957. He saw the puzzle in a mathematical journal, wondered how it worked, and proceeded to go down a 47-year-deep rabbit hole. Our EA found solved the puzzle in less than a second, but solutions have fractal borders. I ended up ending more questions than I came in with. I hope that someday I'll write a follow-up to this problem after a *lot* more background. If you're curious to poke around at the algorithm yourself, [feel free](https://github.com/shauncassini/magic-hexagon). I'd love to see what you come up with!
 
-I'd like to thank my housemates for their insights and for putting up with my relentless (maybe a little obsessive) verbal thinking, my girlfriend for keeping me from going too far down the rabbit hole and my friend Nicola Mendini, who love's puzzles as much as I do, and without whom I would still be shuffling tiles around by hand. Above all, I'd like to thank my dad for surprising me with this hexagon for Christmas - I told you I'd solve it.
+I'd like to thank my housemates for their insights and for putting up with my relentless (maybe a little obsessive) verbal thinking and my friend Nicola Mendini, who love's puzzles as much as I do, and without whom I would still be shuffling tiles around by hand. Above all, I'd like to thank my dad for surprising me with this hexagon for Christmas - I told you I'd solve it.
 
 ## Future work
 
