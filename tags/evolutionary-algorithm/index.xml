@@ -169,7 +169,7 @@ Solution found!
 &lt;!-- raw HTML omitted -->
 &lt;p>Since we&amp;rsquo;re dealing with a stochastic algorithm, we can only &lt;em>estimate&lt;/em> the performance of the EA averaged over several runs. Selecting the optimal set of parameters, therefore, should be based on more than just the speed of finding a solution. The variance of our observations should also be taken into account; we aim to minimize both the variance and the mean of search iterations given a set of parameters. A harmonic mean is the way to go for this type of evaluation, and is defined as&lt;/p>
 &lt;p>\[ H(\mu, \sigma) = {\left(0.5 \left(\frac{1}{1 - \mu} + \frac{1}{1 - \sigma} \right) \right)^{-1}} \]&lt;/p>
-&lt;p>where the mean and variance \(\mu, \sigma \in [ε, 1] \) are both normalized beteween 1 and a tiny non-zero value.&lt;/p>
+&lt;p>where the mean and variance \(\mu, \sigma \in [ε, 1] \) are both normalized beteween 1 and a tiny non-zero value. You can see how the harmonic mean values both a low variance and low mean in the plot below:&lt;/p>
 &lt;img style='width: 70%; margin: auto; margin-top: -80px;'src = '../hexagon/harmonic_mean.svg' alt=''>&lt;/img>
 &lt;p>It took 48 hours to average over 20 runs on 400 different parameter combinations. Once my CPU&amp;rsquo;s agony was over, I found an optimal set of paramers which gave a considerble improvement in search time.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-shellsession" data-lang="shellsession">&amp;gt;&amp;gt;&amp;gt; hexagon = MagicHexSolver(p_size=25, p_cand=0.0925)
