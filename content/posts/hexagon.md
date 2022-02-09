@@ -31,7 +31,7 @@ Artifical evolution and EAs take inspiration from their natural counterpart as a
 
 ```python
 while True:
-		# Create offspring population
+	# Create offspring population
     candidates = select(population)
     offspring  = mutate(candidates)
     # Update population 
@@ -287,7 +287,7 @@ Since we're dealing with a stochastic algorithm, we can only *estimate* the perf
 
 \\[ H(\mu, \sigma) = {\left(0.5 \left(\frac{1}{1 - \mu} + \frac{1}{1 - \sigma} \right) \right)^{-1}} \\]
 
-where the mean and variance \\(\mu, \sigma \in  [ε, 1] \\) are both normalized beteween 1 and a tiny non-zero value.
+where the mean and variance \\(\mu, \sigma \in  [ε, 1] \\) are both normalized beteween 1 and a tiny non-zero value. You can see how the harmonic mean values both a low variance and low mean in the plot below:
 
 {{< rawhtml >}}
 <img style='width: 70%;  margin: auto; margin-top: -80px;'src = '../hexagon/harmonic_mean.svg' alt=''></img>
