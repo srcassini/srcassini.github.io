@@ -54,9 +54,9 @@ paginate = 5
   [languages.en]
     languageName = "English"
     title = "Shaun Cassini"
-    subtitle = "blogs, jobs, profile and whatever else comes to mind"
+    subtitle = "This is my personal website, where you'll find posts, papers, and whatever else comes to mind."
     owner = "Shaun Cassini"
-    keywords = "Shaun Cassini, University of Sheffield"
+    keywords = "Shaun Cassini, University of Sheffield, Personal Website"
     copyright = ""
     menuMore = ""
     readMore = ""
