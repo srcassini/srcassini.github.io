@@ -8,146 +8,166 @@ What&amp;rsquo;s so puzzly about this then? The hexagon I got was not neatly pri
 &lt;img class='post image' style='margin-top: -2%;' src = '../hexagon/Flowchart.svg' alt='A simple flowchart of natural selection'>&lt;/img>
 Illustrated above are the principles of Darwinian natural selection. During reporoduction, the genetic material or &lt;strong>genotype&lt;/strong> of an organism is passed on to its offspring. The organism&amp;rsquo;s &lt;strong>phenotype&lt;/strong> are manifestations of its genes, altering it&amp;rsquo;s appearance or behaviour. Natural selection operates not an an organism&amp;rsquo;s genes, but on the final product; it&amp;rsquo;s phenotype. It is the environment that shapes the organism, and individuals better suited to the environment are more likely to reproduce and pass on traits to offspring.&lt;/p>
 &lt;p>Artifical evolution and EAs take inspiration from their natural counterpart as a heuristic for finding solutions to hard, &lt;a href="https://www.britannica.com/science/NP-complete-problem">often NP&lt;/a>, problems. EAs attempts to find an optimal state to a problem, and are characterised by a &lt;strong>genetic representation&lt;/strong> of the state, a &lt;strong>population&lt;/strong> of genes, a &lt;strong>fitness function&lt;/strong> to evaluate each gene, a &lt;strong>selection&lt;/strong> method for selecting candidate genes, a &lt;strong>mutation&lt;/strong> method for mutating a pool of canditates and a &lt;strong>replacement&lt;/strong> method for determining how the old population is updated. An example evolutionary loop of an EA is shown below. Due to the randomness of mutations, it is possible that the algorithm never converges! A &lt;strong>convergence criterion&lt;/strong> is therefore also included to monitor the performance of the loop, stopping it if necessary.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">&lt;span style="color:#66d9ef">while&lt;/span> &lt;span style="color:#66d9ef">True&lt;/span>:
-&lt;span style="color:#75715e"># Create offspring population&lt;/span>
-candidates &lt;span style="color:#f92672">=&lt;/span> select(population)
-offspring &lt;span style="color:#f92672">=&lt;/span> mutate(candidates)
-&lt;span style="color:#75715e"># Update population &lt;/span>
-population &lt;span style="color:#f92672">=&lt;/span> update_population(population, offspring)
-&lt;span style="color:#75715e"># Convergence criterion&lt;/span>
-&lt;span style="color:#66d9ef">if&lt;/span> check_convergence(population):
-&lt;span style="color:#66d9ef">break&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="implementation">Implementation&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">while&lt;/span> &lt;span style="color:#66d9ef">True&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Create offspring population&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> candidates &lt;span style="color:#f92672">=&lt;/span> select(population)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> offspring &lt;span style="color:#f92672">=&lt;/span> mutate(candidates)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Update population &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> population &lt;span style="color:#f92672">=&lt;/span> update_population(population, offspring)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Convergence criterion&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> check_convergence(population):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="implementation">Implementation&lt;/h2>
 &lt;p>Armed with sufficient background in EAs, it is time to solve the impossible puzzle. First, we create a class for our solver and then define each of its components adhering to the principles of EAs. The algorithm only takes two parameters:&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>p_size&lt;/code> :: the number of genes in the population&lt;/li>
 &lt;li>&lt;code>p_cand&lt;/code> :: the proportion of candidate genes to select from the population&lt;/li>
 &lt;/ul>
 &lt;p>The thinking behind choosing the &lt;em>proportion&lt;/em> of candidates as opposed to a the &lt;em>number&lt;/em> of candidates as hyperparameter is to reduce it&amp;rsquo;s dependency on &lt;code>p_cand&lt;/code>. An experiment with a population of 50 and 5 candidates vs. a population of 100 and 10 candidates is essentially the same experiment at different scales, since the population to candidate ratio is the same; 50:5 = 100:10 = 10:1. Change the proportion, and you have a new experiment.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">&lt;span style="color:#f92672">import&lt;/span> numpy &lt;span style="color:#66d9ef">as&lt;/span> np
-&lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">MagicHexSolver&lt;/span>():
-&lt;span style="color:#66d9ef">global&lt;/span> M
-M &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">38&lt;/span> &lt;span style="color:#75715e"># The magic number&lt;/span>
-&lt;span style="color:#66d9ef">def&lt;/span> __init__(self,
-p_size: int, &lt;span style="color:#75715e"># population size&lt;/span>
-p_cand: int &lt;span style="color:#75715e"># proportion of candidates&lt;/span>
-):
-self&lt;span style="color:#f92672">.&lt;/span>p_size &lt;span style="color:#f92672">=&lt;/span> p_size
-self&lt;span style="color:#f92672">.&lt;/span>n_candidates &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>get_n_candidates(p_size, p_cand)
-&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">get_n_candidates&lt;/span>(self, p_size, p_cand):
-&lt;span style="color:#75715e"># factors of p_size&lt;/span>
-cs &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([c &lt;span style="color:#66d9ef">for&lt;/span> c &lt;span style="color:#f92672">in&lt;/span> range(&lt;span style="color:#ae81ff">1&lt;/span>, p_size&lt;span style="color:#f92672">+&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>) &lt;span style="color:#66d9ef">if&lt;/span> p_size &lt;span style="color:#f92672">%&lt;/span> c &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>])
-&lt;span style="color:#75715e"># choose closest factor as n_candidates&lt;/span>
-&lt;span style="color:#66d9ef">return&lt;/span> cs[np&lt;span style="color:#f92672">.&lt;/span>abs(cs &lt;span style="color:#f92672">-&lt;/span> int(p_size &lt;span style="color:#f92672">*&lt;/span> p_cand))&lt;span style="color:#f92672">.&lt;/span>argmin()]
-&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> numpy &lt;span style="color:#66d9ef">as&lt;/span> np
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">class&lt;/span> &lt;span style="color:#a6e22e">MagicHexSolver&lt;/span>():
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">global&lt;/span> M
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> M &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">38&lt;/span> &lt;span style="color:#75715e"># The magic number&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">def&lt;/span> __init__(self,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> p_size: int, &lt;span style="color:#75715e"># population size&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> p_cand: int &lt;span style="color:#75715e"># proportion of candidates&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> self&lt;span style="color:#f92672">.&lt;/span>p_size &lt;span style="color:#f92672">=&lt;/span> p_size
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> self&lt;span style="color:#f92672">.&lt;/span>n_candidates &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>get_n_candidates(p_size, p_cand)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">get_n_candidates&lt;/span>(self, p_size, p_cand):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># factors of p_size&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cs &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([c &lt;span style="color:#66d9ef">for&lt;/span> c &lt;span style="color:#f92672">in&lt;/span> range(&lt;span style="color:#ae81ff">1&lt;/span>, p_size&lt;span style="color:#f92672">+&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>) &lt;span style="color:#66d9ef">if&lt;/span> p_size &lt;span style="color:#f92672">%&lt;/span> c &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># choose closest factor as n_candidates&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> cs[np&lt;span style="color:#f92672">.&lt;/span>abs(cs &lt;span style="color:#f92672">-&lt;/span> int(p_size &lt;span style="color:#f92672">*&lt;/span> p_cand))&lt;span style="color:#f92672">.&lt;/span>argmin()]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>Genetic representation &amp;amp; population&lt;/p>
 &lt;/blockquote>
 &lt;p>This is as simple as &amp;lsquo;flattening&amp;rsquo; the board into a 1D array of integers to represent each tile. The tiles of the initial boards are assumed to be randomly placed, so the initial population of size &lt;code>p_size&lt;/code> is instantiated with a simple list comprehension.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([
-np&lt;span style="color:#f92672">.&lt;/span>random&lt;span style="color:#f92672">.&lt;/span>permutation(&lt;span style="color:#ae81ff">19&lt;/span>) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#66d9ef">for&lt;/span> _ &lt;span style="color:#f92672">in&lt;/span> range(self&lt;span style="color:#f92672">.&lt;/span>p_size)
-])
-&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> np&lt;span style="color:#f92672">.&lt;/span>random&lt;span style="color:#f92672">.&lt;/span>permutation(&lt;span style="color:#ae81ff">19&lt;/span>) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#66d9ef">for&lt;/span> _ &lt;span style="color:#f92672">in&lt;/span> range(self&lt;span style="color:#f92672">.&lt;/span>p_size)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>])
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>Fitness function&lt;/p>
 &lt;/blockquote>
 &lt;p>This part is a bit trickier, since each row of each board needs evaluating at each iteration, and there may be millions of iterations required until convergence! For-loops are inefficient and won&amp;rsquo;t do - Numpy indexing to the rescue.&lt;/p>
 &lt;p>Recall the goal of the puzzle: each row of the hexagon in every direction must sum to the same magic constant &lt;code>M&lt;/code>. Notice that 5/15 rows can be obtained by taking each horizontal row. By then taking the diagonal rows of the hexagon from top to bottom left and from top to bottom right, all 15 rows can be addressed.
 Broadcast indexing a board gene with a tedious map of each possible row results in a matrix of all 15 rows of that board. It is then easy to check whether each row results in the same sum.&lt;/p>
 &lt;p>There&amp;rsquo;s now one final catch: the rows of the hexagon aren&amp;rsquo;t the same length. This is dealt with by padding each row in the map with zeros, and making the 0ᵗʰ element of the board gene also 0 - hence why the board gene is of length 20 and not 19.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">&lt;span style="color:#66d9ef">global&lt;/span> ROW_MAP
-ROW_MAP &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([
-&lt;span style="color:#75715e"># Horizontal rows Reference hexagon indices&lt;/span>
-[&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
-[&lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#ae81ff">6&lt;/span>, &lt;span style="color:#ae81ff">7&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># 1 2 3&lt;/span>
-[&lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">9&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">11&lt;/span>, &lt;span style="color:#ae81ff">12&lt;/span>], &lt;span style="color:#75715e"># 4 5 6 7&lt;/span>
-[&lt;span style="color:#ae81ff">13&lt;/span>, &lt;span style="color:#ae81ff">14&lt;/span>, &lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#ae81ff">16&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># 8 9 10 11 12 &lt;/span>
-[&lt;span style="color:#ae81ff">17&lt;/span>, &lt;span style="color:#ae81ff">18&lt;/span>, &lt;span style="color:#ae81ff">19&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># 13 14 15 16 &lt;/span>
-&lt;span style="color:#75715e"># Top -&amp;gt; bottom left 17 18 19 &lt;/span>
-[&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
-[&lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#ae81ff">9&lt;/span>, &lt;span style="color:#ae81ff">13&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># Notice how the indices to the left refer&lt;/span>
-[&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">6&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">14&lt;/span>, &lt;span style="color:#ae81ff">17&lt;/span>], &lt;span style="color:#75715e"># to all 15 possible rows on the hexagon &lt;/span>
-[&lt;span style="color:#ae81ff">7&lt;/span>, &lt;span style="color:#ae81ff">11&lt;/span>, &lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#ae81ff">18&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
-[&lt;span style="color:#ae81ff">12&lt;/span>, &lt;span style="color:#ae81ff">16&lt;/span>, &lt;span style="color:#ae81ff">19&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
-&lt;span style="color:#75715e"># Top -&amp;gt; bottom right&lt;/span>
-[&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">7&lt;/span>, &lt;span style="color:#ae81ff">12&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
-[&lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">6&lt;/span>, &lt;span style="color:#ae81ff">11&lt;/span>, &lt;span style="color:#ae81ff">16&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
-[&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#ae81ff">19&lt;/span>],
-[&lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">9&lt;/span>, &lt;span style="color:#ae81ff">14&lt;/span>, &lt;span style="color:#ae81ff">18&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
-[&lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">13&lt;/span>, &lt;span style="color:#ae81ff">17&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>]
-])
-&lt;span style="color:#75715e"># The population is modified to include a 0 at the 0ᵗʰ index of each gene. &lt;/span>
-zero_padding &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>zeros(self&lt;span style="color:#f92672">.&lt;/span>p_size, dtype&lt;span style="color:#f92672">=&lt;/span>np&lt;span style="color:#f92672">.&lt;/span>uint8)[:,&lt;span style="color:#66d9ef">None&lt;/span>]
-population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>hstack((zero_padding, population))
-&lt;span style="color:#75715e"># Simply the opposite of fitness; the lower the cost, the higher the fitness&lt;/span>
-&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">get_cost&lt;/span>(self, population):
-row_sums &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>sum(population[:, ROW_MAP], axis&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">2&lt;/span>)
-row_diff &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>abs(M &lt;span style="color:#f92672">-&lt;/span> row_sums)
-&lt;span style="color:#66d9ef">return&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>sum(row_diff, axis&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>)
-&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">global&lt;/span> ROW_MAP
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ROW_MAP &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Horizontal rows Reference hexagon indices&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#ae81ff">6&lt;/span>, &lt;span style="color:#ae81ff">7&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># 1 2 3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">9&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">11&lt;/span>, &lt;span style="color:#ae81ff">12&lt;/span>], &lt;span style="color:#75715e"># 4 5 6 7&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">13&lt;/span>, &lt;span style="color:#ae81ff">14&lt;/span>, &lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#ae81ff">16&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># 8 9 10 11 12 &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">17&lt;/span>, &lt;span style="color:#ae81ff">18&lt;/span>, &lt;span style="color:#ae81ff">19&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># 13 14 15 16 &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Top -&amp;gt; bottom left 17 18 19 &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#ae81ff">9&lt;/span>, &lt;span style="color:#ae81ff">13&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>], &lt;span style="color:#75715e"># Notice how the indices to the left refer&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">6&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">14&lt;/span>, &lt;span style="color:#ae81ff">17&lt;/span>], &lt;span style="color:#75715e"># to all 15 possible rows on the hexagon &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">7&lt;/span>, &lt;span style="color:#ae81ff">11&lt;/span>, &lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#ae81ff">18&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">12&lt;/span>, &lt;span style="color:#ae81ff">16&lt;/span>, &lt;span style="color:#ae81ff">19&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Top -&amp;gt; bottom right&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">7&lt;/span>, &lt;span style="color:#ae81ff">12&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">2&lt;/span>, &lt;span style="color:#ae81ff">6&lt;/span>, &lt;span style="color:#ae81ff">11&lt;/span>, &lt;span style="color:#ae81ff">16&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">5&lt;/span>, &lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">15&lt;/span>, &lt;span style="color:#ae81ff">19&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">4&lt;/span>, &lt;span style="color:#ae81ff">9&lt;/span>, &lt;span style="color:#ae81ff">14&lt;/span>, &lt;span style="color:#ae81ff">18&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [&lt;span style="color:#ae81ff">8&lt;/span>, &lt;span style="color:#ae81ff">13&lt;/span>, &lt;span style="color:#ae81ff">17&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>, &lt;span style="color:#ae81ff">0&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># The population is modified to include a 0 at the 0ᵗʰ index of each gene. &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>zero_padding &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>zeros(self&lt;span style="color:#f92672">.&lt;/span>p_size, dtype&lt;span style="color:#f92672">=&lt;/span>np&lt;span style="color:#f92672">.&lt;/span>uint8)[:,&lt;span style="color:#66d9ef">None&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>hstack((zero_padding, population))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Simply the opposite of fitness; the lower the cost, the higher the fitness&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">get_cost&lt;/span>(self, population):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> row_sums &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>sum(population[:, ROW_MAP], axis&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">2&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> row_diff &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>abs(M &lt;span style="color:#f92672">-&lt;/span> row_sums)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>sum(row_diff, axis&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>Selection &amp;amp; Cloning&lt;/p>
 &lt;/blockquote>
 &lt;p>After applying the fitness function above to each member of the population, the best &lt;code>n_candidates&lt;/code> are selected. The candidates are then cloned, mutated, and the old population is replaced with spritely new boards.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">select_best&lt;/span>(self, population):
-&lt;span style="color:#75715e"># how many times to clone each candidate&lt;/span>
-cloning_factor &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>p_size &lt;span style="color:#f92672">//&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>n_candidates
-costs &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>get_cost(population)
-fittest_indices &lt;span style="color:#f92672">=&lt;/span> costs&lt;span style="color:#f92672">.&lt;/span>argsort()[:self&lt;span style="color:#f92672">.&lt;/span>n_candidates]
-fittest &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>repeat(population[fittest_indices], cloning_factor, axis&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>)
-&lt;span style="color:#66d9ef">return&lt;/span> fittest, costs&lt;span style="color:#f92672">.&lt;/span>min() &lt;span style="color:#75715e"># also return the fitness of the best gene&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">select_best&lt;/span>(self, population):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># how many times to clone each candidate&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cloning_factor &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>p_size &lt;span style="color:#f92672">//&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>n_candidates
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> costs &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>get_cost(population)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fittest_indices &lt;span style="color:#f92672">=&lt;/span> costs&lt;span style="color:#f92672">.&lt;/span>argsort()[:self&lt;span style="color:#f92672">.&lt;/span>n_candidates]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> fittest &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>repeat(population[fittest_indices], cloning_factor, axis&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> fittest, costs&lt;span style="color:#f92672">.&lt;/span>min() &lt;span style="color:#75715e"># also return the fitness of the best gene&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>Mutation&lt;/p>
 &lt;/blockquote>
 &lt;p>The solution to the puzzle lies somewhere in the search space of all possible boards. A naïve way to explore this space is to continuously swap two tiles on the board at random. After selecting a pool of candidate solutions, two random indices are simultaneously picked for each candidate and then swapped. In other words, every gene is mutated in the hope that some of them exhibit higher fitness or become pioneers in the unexplored search space.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">mutate&lt;/span>(self, candidates):
-&lt;span style="color:#75715e"># Don&amp;#39;t swap the 0ᵗʰ index!&lt;/span>
-swaps &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>random&lt;span style="color:#f92672">.&lt;/span>randint(&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">20&lt;/span>, size&lt;span style="color:#f92672">=&lt;/span>(&lt;span style="color:#ae81ff">2&lt;/span>, self&lt;span style="color:#f92672">.&lt;/span>n_candidates))
-indices &lt;span style="color:#f92672">=&lt;/span> range(self&lt;span style="color:#f92672">.&lt;/span>n_candidates) &lt;span style="color:#75715e"># needed to index each gene - different to &amp;#39;:&amp;#39;&lt;/span>
-temp &lt;span style="color:#f92672">=&lt;/span> candidates[indices, swaps[&lt;span style="color:#ae81ff">0&lt;/span>]]
-candidates[indices, swaps[&lt;span style="color:#ae81ff">0&lt;/span>]] &lt;span style="color:#f92672">=&lt;/span> candidates[indices, swaps[&lt;span style="color:#ae81ff">1&lt;/span>]]
-candidates[indices, swaps[&lt;span style="color:#ae81ff">1&lt;/span>]] &lt;span style="color:#f92672">=&lt;/span> temp
-&lt;span style="color:#66d9ef">return&lt;/span> candidates
-&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">mutate&lt;/span>(self, candidates):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Don&amp;#39;t swap the 0ᵗʰ index!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> swaps &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>random&lt;span style="color:#f92672">.&lt;/span>randint(&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">20&lt;/span>, size&lt;span style="color:#f92672">=&lt;/span>(&lt;span style="color:#ae81ff">2&lt;/span>, self&lt;span style="color:#f92672">.&lt;/span>n_candidates))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> indices &lt;span style="color:#f92672">=&lt;/span> range(self&lt;span style="color:#f92672">.&lt;/span>n_candidates) &lt;span style="color:#75715e"># needed to index each gene - different to &amp;#39;:&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> temp &lt;span style="color:#f92672">=&lt;/span> candidates[indices, swaps[&lt;span style="color:#ae81ff">0&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> candidates[indices, swaps[&lt;span style="color:#ae81ff">0&lt;/span>]] &lt;span style="color:#f92672">=&lt;/span> candidates[indices, swaps[&lt;span style="color:#ae81ff">1&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> candidates[indices, swaps[&lt;span style="color:#ae81ff">1&lt;/span>]] &lt;span style="color:#f92672">=&lt;/span> temp
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span> candidates
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>Evolutionary loop&lt;/p>
 &lt;/blockquote>
 &lt;p>We now weave all of our functions in one evolutionary loop. Notice the similarity with the general EA algorithm described &lt;a href="#evolutionary-algorithms">above&lt;/a>. We&amp;rsquo;ll add an &amp;lsquo;optimization&amp;rsquo; mode to the search for when we want to fine tune its parameters.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">&lt;span style="color:#f92672">import&lt;/span> time
-&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">search&lt;/span>(self, optimizing&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">False&lt;/span>):
-population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([
-np&lt;span style="color:#f92672">.&lt;/span>random&lt;span style="color:#f92672">.&lt;/span>permutation(&lt;span style="color:#ae81ff">19&lt;/span>) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#66d9ef">for&lt;/span> _ &lt;span style="color:#f92672">in&lt;/span> range(self&lt;span style="color:#f92672">.&lt;/span>p_size)
-])
-zero_padding &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>zeros(self&lt;span style="color:#f92672">.&lt;/span>p_size, dtype&lt;span style="color:#f92672">=&lt;/span>np&lt;span style="color:#f92672">.&lt;/span>uint8)[:,&lt;span style="color:#66d9ef">None&lt;/span>]
-population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>hstack((zero_padding, population))
-candidates, cost &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>select_best(population)
-&lt;span style="color:#75715e"># Keep track of the time and no. of iterations&lt;/span>
-time_start &lt;span style="color:#f92672">=&lt;/span> time&lt;span style="color:#f92672">.&lt;/span>time()
-i &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>
-&lt;span style="color:#66d9ef">while&lt;/span> cost &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>: &lt;span style="color:#75715e"># convergence criterion&lt;/span>
-i &lt;span style="color:#f92672">+=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
-population &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>mutate(candidates)
-candidates, cost &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>select_best(population) &lt;span style="color:#75715e"># &amp;#39;cost&amp;#39; is the evaluation&lt;/span>
-time_elapsed &lt;span style="color:#f92672">=&lt;/span> time&lt;span style="color:#f92672">.&lt;/span>time() &lt;span style="color:#f92672">-&lt;/span> time_start
-&lt;span style="color:#66d9ef">if&lt;/span> optimizing: &lt;span style="color:#66d9ef">return&lt;/span> i
-&lt;span style="color:#66d9ef">else&lt;/span>: &lt;span style="color:#75715e"># retrieve the best candidate - the solution to the puzzle&lt;/span>
-costs &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>get_cost(candidates)
-best_candidate &lt;span style="color:#f92672">=&lt;/span> candidates[costs&lt;span style="color:#f92672">.&lt;/span>argsort()[&lt;span style="color:#ae81ff">0&lt;/span>]]
-display_board(best_candidate, i, time_elapsed)
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally, we write method to display the board in a more readable way once (if) a solution is found.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-python" data-lang="python">&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">display_board&lt;/span>(self, board, i, time):
-&lt;span style="color:#75715e"># convert numbers to strings (with 0s in front of numbers &amp;lt; 10)&lt;/span>
-board_str &lt;span style="color:#f92672">=&lt;/span> [&lt;span style="color:#e6db74">&amp;#39;&lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">&amp;#39;&lt;/span>&lt;span style="color:#f92672">.&lt;/span>format(t) &lt;span style="color:#66d9ef">if&lt;/span> t &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">9&lt;/span> &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#e6db74">&amp;#39;0&lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">&amp;#39;&lt;/span>&lt;span style="color:#f92672">.&lt;/span>format(t) &lt;span style="color:#66d9ef">for&lt;/span> t &lt;span style="color:#f92672">in&lt;/span> board[&lt;span style="color:#ae81ff">1&lt;/span>:]]
-template &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;#39;&amp;#39;
-&lt;/span>&lt;span style="color:#e6db74"> Solution found!
-&lt;/span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{:.2e}&lt;/span>&lt;span style="color:#e6db74"> iterations
-&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{:.2e}&lt;/span>&lt;span style="color:#e6db74"> seconds
-&lt;/span>&lt;span style="color:#e6db74"> &amp;#39;&amp;#39;&amp;#39;&lt;/span>
-print(template&lt;span style="color:#f92672">.&lt;/span>format(&lt;span style="color:#f92672">*&lt;/span>board_str, i, time))
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>That&amp;rsquo;s all there is to it! Now to check if everything works&amp;hellip; let&amp;rsquo;s plug in a population size and proportion of candidates.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> time
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">search&lt;/span>(self, optimizing&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">False&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>array([
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> np&lt;span style="color:#f92672">.&lt;/span>random&lt;span style="color:#f92672">.&lt;/span>permutation(&lt;span style="color:#ae81ff">19&lt;/span>) &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#66d9ef">for&lt;/span> _ &lt;span style="color:#f92672">in&lt;/span> range(self&lt;span style="color:#f92672">.&lt;/span>p_size)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> zero_padding &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>zeros(self&lt;span style="color:#f92672">.&lt;/span>p_size, dtype&lt;span style="color:#f92672">=&lt;/span>np&lt;span style="color:#f92672">.&lt;/span>uint8)[:,&lt;span style="color:#66d9ef">None&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> population &lt;span style="color:#f92672">=&lt;/span> np&lt;span style="color:#f92672">.&lt;/span>hstack((zero_padding, population))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> candidates, cost &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>select_best(population)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Keep track of the time and no. of iterations&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> time_start &lt;span style="color:#f92672">=&lt;/span> time&lt;span style="color:#f92672">.&lt;/span>time()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> i &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">while&lt;/span> cost &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>: &lt;span style="color:#75715e"># convergence criterion&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> i &lt;span style="color:#f92672">+=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> population &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>mutate(candidates)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> candidates, cost &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>select_best(population) &lt;span style="color:#75715e"># &amp;#39;cost&amp;#39; is the evaluation&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> time_elapsed &lt;span style="color:#f92672">=&lt;/span> time&lt;span style="color:#f92672">.&lt;/span>time() &lt;span style="color:#f92672">-&lt;/span> time_start
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> optimizing: &lt;span style="color:#66d9ef">return&lt;/span> i
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>: &lt;span style="color:#75715e"># retrieve the best candidate - the solution to the puzzle&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> costs &lt;span style="color:#f92672">=&lt;/span> self&lt;span style="color:#f92672">.&lt;/span>get_cost(candidates)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> best_candidate &lt;span style="color:#f92672">=&lt;/span> candidates[costs&lt;span style="color:#f92672">.&lt;/span>argsort()[&lt;span style="color:#ae81ff">0&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> display_board(best_candidate, i, time_elapsed)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally, we write method to display the board in a more readable way once (if) a solution is found.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">def&lt;/span> &lt;span style="color:#a6e22e">display_board&lt;/span>(self, board, i, time):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># convert numbers to strings (with 0s in front of numbers &amp;lt; 10)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> board_str &lt;span style="color:#f92672">=&lt;/span> [&lt;span style="color:#e6db74">&amp;#39;&lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">&amp;#39;&lt;/span>&lt;span style="color:#f92672">.&lt;/span>format(t) &lt;span style="color:#66d9ef">if&lt;/span> t &lt;span style="color:#f92672">&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">9&lt;/span> &lt;span style="color:#66d9ef">else&lt;/span> &lt;span style="color:#e6db74">&amp;#39;0&lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">&amp;#39;&lt;/span>&lt;span style="color:#f92672">.&lt;/span>format(t) &lt;span style="color:#66d9ef">for&lt;/span> t &lt;span style="color:#f92672">in&lt;/span> board[&lt;span style="color:#ae81ff">1&lt;/span>:]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> template &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;#39;&amp;#39;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> Solution found!
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{}&lt;/span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{:.2e}&lt;/span>&lt;span style="color:#e6db74"> iterations
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#e6db74">{:.2e}&lt;/span>&lt;span style="color:#e6db74"> seconds
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &amp;#39;&amp;#39;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> print(template&lt;span style="color:#f92672">.&lt;/span>format(&lt;span style="color:#f92672">*&lt;/span>board_str, i, time))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That&amp;rsquo;s all there is to it! Now to check if everything works&amp;hellip; let&amp;rsquo;s plug in a population size and proportion of candidates.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-shellsession" data-lang="shellsession">src$ python -i magic_hexagon.py # run in interpretable mode
 &amp;gt;&amp;gt;&amp;gt; hexagon = MagicHexSolver(p_size=100, p_cand=0.2)
 &amp;gt;&amp;gt;&amp;gt; hexagon.search()
@@ -224,7 +244,7 @@ Solution found!
 &lt;p>If we assume that a population&amp;rsquo;s fitness distribution is Gaussian, maybe the convergence of its mean and variance could be modelled as a set of &amp;lsquo;statistical&amp;rsquo; ordinary differential equations?&lt;/p>
 &lt;h2 id="wrapping-up">Wrapping up&lt;/h2>
 &lt;p>Clifford W. Adams started work on finding a mathematical solution to the Hexagon in 1910 and eventually solved it in 1957. He saw the puzzle in a mathematical journal, wondered how it worked, and proceeded to go down a 47-year-deep rabbit hole. Our EA found solved the puzzle in less than a second, but solutions have fractal borders. I ended up ending more questions than I came in with. I hope that someday I&amp;rsquo;ll write a follow-up to this problem after a &lt;em>lot&lt;/em> more background. If you&amp;rsquo;re curious to poke around at the algorithm yourself, &lt;a href="https://github.com/shauncassini/magic-hexagon">feel free&lt;/a>. I&amp;rsquo;d love to see what you come up with!&lt;/p>
-&lt;p>I&amp;rsquo;d like to thank my housemates for their insights and for putting up with my relentless (maybe a little obsessive) verbal thinking and my friend Nicola Mendini, who love&amp;rsquo;s puzzles as much as I do, and without whom I would still be shuffling tiles around by hand. Above all, I&amp;rsquo;d like to thank my dad for surprising me with this hexagon for Christmas - I told you I&amp;rsquo;d solve it.&lt;/p>
+&lt;p>I&amp;rsquo;d like to thank my housemates for their insights and for putting up with my relentless (maybe a little obsessive) verbal thinking and my friend Nicola Mendini, who loves puzzles as much as I do, and without whom I would still be shuffling tiles around by hand. Above all, I&amp;rsquo;d like to thank my dad for surprising me with this hexagon for Christmas - I told you I&amp;rsquo;d solve it.&lt;/p>
 &lt;h2 id="future-work">Future work&lt;/h2>
 &lt;ul>
 &lt;li>Applying the EA to a simpler problem, say, OneMax&lt;sup id="fnref:3">&lt;a href="#fn:3" class="footnote-ref" role="doc-noteref">3&lt;/a>&lt;/sup> and estimating it&amp;rsquo;s runtime with Drift Analyis [3].&lt;/li>

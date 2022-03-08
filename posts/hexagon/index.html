@@ -1,7 +1,6 @@
 <!doctype html><html lang=en>
 <head>
-<title>Solving the Magic Hexagon with an Evolutionary Algorithm :: Shaun Cassini</title>
-<meta charset=utf-8>
+<title>Solving the Magic Hexagon with an Evolutionary Algorithm :: Shaun Cassini</title><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Two years ago for Christmas, I got an 'impossible to solve' Magic Hexagon puzzle. Using the power of evolutionary genetic algorithms, numpy and millions of iterations, 'impossible' turned to less than a second of computation. The key ideas are simple: 1. Represent each state of the board as a *gene*. 2. Create a *population* of boards. 3. Randomly *mutate* each gene in the population. 4. Based on a *fitness measure*, select the best candiates from the mutated population and 5. *clone* the best candidates to create a new population and repeat until convergence. Through this cycle of evolution an apex gene emerges, and the unsolvable puzzle is solved.">
 <meta name=keywords content="Puzzle,Evolutionary Algorithm,Magic Hexagon">
@@ -25,8 +24,7 @@
 <meta property="og:image:width" content="2048">
 <meta property="og:image:height" content="1024">
 <meta property="article:published_time" content="2022-02-08 00:00:00 +0000 UTC">
-</head>
-<body class=red>
+</head><body class=red>
 <div class="container center headings--one-size">
 <header class=header>
 <div class=header__inner>
@@ -34,207 +32,161 @@
 <a href=/>
 <div class=logo>
 Shaun Rafael Cassini
-</div>
-</a>
-</div>
-<div class=menu-trigger>menu</div>
-</div>
-<nav class=menu>
+</div></a>
+</div><div class=menu-trigger>menu</div></div><nav class=menu>
 <ul class="menu__inner menu__inner--desktop">
-<li><a href=/posts>Posts</a></li>
-<li><a href=/words>Words</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/posts>Posts</a></li>
-<li><a href=/words>Words</a></li>
-</ul>
-</nav>
-</header>
-<div class=content>
+<li><a href=/posts>Posts</a></li><li><a href=/words>Words</a></li></ul><ul class="menu__inner menu__inner--mobile">
+<li><a href=/posts>Posts</a></li><li><a href=/words>Words</a></li></ul></nav></header><div class=content>
 <div class=post>
 <h1 class=post-title>
-<a href=https://srcassini.github.io/posts/hexagon/>Solving the Magic Hexagon with an Evolutionary Algorithm</a></h1>
-<div class=post-meta>
+<a href=https://srcassini.github.io/posts/hexagon/>Solving the Magic Hexagon with an Evolutionary Algorithm</a></h1><div class=post-meta>
 <span class=post-date>
 2022-02-08
 </span>
-</div>
-<span class=post-tags>
+</div><span class=post-tags>
 #<a href=https://srcassini.github.io/tags/puzzle/>Puzzle</a>&nbsp;
 #<a href=https://srcassini.github.io/tags/evolutionary-algorithm/>Evolutionary Algorithm</a>&nbsp;
 </span>
 <div class=post-content><div>
-<h2 id=sudoku-on-steroids>Sudoku on steroids<a href=#sudoku-on-steroids class=hanchor arialabel=Anchor>&#8983;</a> </h2>
-<p>Two years ago for Christmas, I got an &lsquo;impossible to solve&rsquo; <a href=https://en.wikipedia.org/wiki/Magic_hexagon>Magic Hexagon</a> puzzle. Arranged in the right way, all 15 rows of the hexagon, horizontally and diagonally, have the same magic sum of 38. Hover over the one below and count for yourself.</p>
-<img class="post image" style=margin-top:-6%;margin-bottom:-6% id=hexagon src=../hexagon/hexagon_scrambled.png alt="Scrambled Magic Hexagon"></img>
-<p>What&rsquo;s so puzzly about this then? The hexagon I got was not neatly printed on paper to demonstrate some odd mathematical property; it was an unnumbered jumbled up mess of smaller hexagons, a bit like the one above. There are 19!/6 ways to arrange the board, and only six valid arrangements due to the six-fold symmetry of the hexagon. After a few minutes of failing to get anywhere, it was clear this was a task fit for a machine. Evolutionary algorithms are perfect for the job.</p>
-<h2 id=evolutionary-algorithms>Evolutionary algorithms<a href=#evolutionary-algorithms class=hanchor arialabel=Anchor>&#8983;</a> </h2>
-<p>The main ideas behind evolutionary alogrithms (EAs) are borrowed from evolution, defined as &ldquo;any change across successive generations in the heritable characteristics of biological populations&rdquo;, allowing for organisms to adapt to their current local environment resulting in both inter and intra diversity in species. Think brown bears and polar bears.
+<h2 id=sudoku-on-steroids>Sudoku on steroids<a href=#sudoku-on-steroids class=hanchor arialabel=Anchor>&#8983;</a> </h2><p>Two years ago for Christmas, I got an &lsquo;impossible to solve&rsquo; <a href=https://en.wikipedia.org/wiki/Magic_hexagon>Magic Hexagon</a> puzzle. Arranged in the right way, all 15 rows of the hexagon, horizontally and diagonally, have the same magic sum of 38. Hover over the one below and count for yourself.</p><img class="post image" style=margin-top:-6%;margin-bottom:-6% id=hexagon src=../hexagon/hexagon_scrambled.png alt="Scrambled Magic Hexagon"></img>
+<p>What&rsquo;s so puzzly about this then? The hexagon I got was not neatly printed on paper to demonstrate some odd mathematical property; it was an unnumbered jumbled up mess of smaller hexagons, a bit like the one above. There are 19!/6 ways to arrange the board, and only six valid arrangements due to the six-fold symmetry of the hexagon. After a few minutes of failing to get anywhere, it was clear this was a task fit for a machine. Evolutionary algorithms are perfect for the job.</p><h2 id=evolutionary-algorithms>Evolutionary algorithms<a href=#evolutionary-algorithms class=hanchor arialabel=Anchor>&#8983;</a> </h2><p>The main ideas behind evolutionary alogrithms (EAs) are borrowed from evolution, defined as &ldquo;any change across successive generations in the heritable characteristics of biological populations&rdquo;, allowing for organisms to adapt to their current local environment resulting in both inter and intra diversity in species. Think brown bears and polar bears.
 <img class="post image" style=margin-top:-2% src=../hexagon/Flowchart.svg alt="A simple flowchart of natural selection"></img>
-Illustrated above are the principles of Darwinian natural selection. During reporoduction, the genetic material or <strong>genotype</strong> of an organism is passed on to its offspring. The organism&rsquo;s <strong>phenotype</strong> are manifestations of its genes, altering it&rsquo;s appearance or behaviour. Natural selection operates not an an organism&rsquo;s genes, but on the final product; it&rsquo;s phenotype. It is the environment that shapes the organism, and individuals better suited to the environment are more likely to reproduce and pass on traits to offspring.</p>
-<p>Artifical evolution and EAs take inspiration from their natural counterpart as a heuristic for finding solutions to hard, <a href=https://www.britannica.com/science/NP-complete-problem>often NP</a>, problems. EAs attempts to find an optimal state to a problem, and are characterised by a <strong>genetic representation</strong> of the state, a <strong>population</strong> of genes, a <strong>fitness function</strong> to evaluate each gene, a <strong>selection</strong> method for selecting candidate genes, a <strong>mutation</strong> method for mutating a pool of canditates and a <strong>replacement</strong> method for determining how the old population is updated. An example evolutionary loop of an EA is shown below. Due to the randomness of mutations, it is possible that the algorithm never converges! A <strong>convergence criterion</strong> is therefore also included to monitor the performance of the loop, stopping it if necessary.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>while</span> <span style=color:#66d9ef>True</span>:
-	<span style=color:#75715e># Create offspring population</span>
-    candidates <span style=color:#f92672>=</span> select(population)
-    offspring  <span style=color:#f92672>=</span> mutate(candidates)
-    <span style=color:#75715e># Update population </span>
-    population <span style=color:#f92672>=</span> update_population(population, offspring)
-    <span style=color:#75715e># Convergence criterion</span>
-    <span style=color:#66d9ef>if</span> check_convergence(population):
-        <span style=color:#66d9ef>break</span>
-</code></pre></div><h2 id=implementation>Implementation<a href=#implementation class=hanchor arialabel=Anchor>&#8983;</a> </h2>
-<p>Armed with sufficient background in EAs, it is time to solve the impossible puzzle. First, we create a class for our solver and then define each of its components adhering to the principles of EAs. The algorithm only takes two parameters:</p>
-<ul>
-<li><code>p_size</code> :: the number of genes in the population</li>
-<li><code>p_cand</code> :: the proportion of candidate genes to select from the population</li>
-</ul>
-<p>The thinking behind choosing the <em>proportion</em> of candidates as opposed to a the <em>number</em> of candidates as hyperparameter is to reduce it&rsquo;s dependency on <code>p_cand</code>. An experiment with a population of 50 and 5 candidates vs. a population of 100 and 10 candidates is essentially the same experiment at different scales, since the population to candidate ratio is the same; 50:5 = 100:10 = 10:1. Change the proportion, and you have a new experiment.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> numpy <span style=color:#66d9ef>as</span> np
-
-<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MagicHexSolver</span>():
-
-    <span style=color:#66d9ef>global</span> M
-    M <span style=color:#f92672>=</span> <span style=color:#ae81ff>38</span>   <span style=color:#75715e># The magic number</span>
-
-    <span style=color:#66d9ef>def</span> __init__(self, 
-        p_size: int, <span style=color:#75715e># population size</span>
-        p_cand: int  <span style=color:#75715e># proportion of candidates</span>
-    ):
-        self<span style=color:#f92672>.</span>p_size <span style=color:#f92672>=</span> p_size 
-        self<span style=color:#f92672>.</span>n_candidates <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>get_n_candidates(p_size, p_cand)
-
-
-    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>get_n_candidates</span>(self, p_size, p_cand):
-        <span style=color:#75715e># factors of p_size</span>
-        cs <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([c <span style=color:#66d9ef>for</span> c <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>1</span>, p_size<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>) <span style=color:#66d9ef>if</span> p_size <span style=color:#f92672>%</span> c <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>])
-        <span style=color:#75715e># choose closest factor as n_candidates</span>
-        <span style=color:#66d9ef>return</span> cs[np<span style=color:#f92672>.</span>abs(cs <span style=color:#f92672>-</span> int(p_size <span style=color:#f92672>*</span> p_cand))<span style=color:#f92672>.</span>argmin()] 
-</code></pre></div><blockquote>
-<p>Genetic representation & population</p>
-</blockquote>
-<p>This is as simple as &lsquo;flattening&rsquo; the board into a 1D array of integers to represent each tile. The tiles of the initial boards are assumed to be randomly placed, so the initial population of size <code>p_size</code> is instantiated with a simple list comprehension.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([
-    np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>permutation(<span style=color:#ae81ff>19</span>) <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(self<span style=color:#f92672>.</span>p_size)
-])
-</code></pre></div><blockquote>
-<p>Fitness function</p>
-</blockquote>
-<p>This part is a bit trickier, since each row of each board needs evaluating at each iteration, and there may be millions of iterations required until convergence! For-loops are inefficient and won&rsquo;t do - Numpy indexing to the rescue.</p>
-<p>Recall the goal of the puzzle: each row of the hexagon in every direction must sum to the same magic constant <code>M</code>. Notice that 5/15 rows can be obtained by taking each horizontal row. By then taking the diagonal rows of the hexagon from top to bottom left and from top to bottom right, all 15 rows can be addressed.
-Broadcast indexing a board gene with a tedious map of each possible row results in a matrix of all 15 rows of that board. It is then easy to check whether each row results in the same sum.</p>
-<p>There&rsquo;s now one final catch: the rows of the hexagon aren&rsquo;t the same length. This is dealt with by padding each row in the map with zeros, and making the 0ᵗʰ element of the board gene also 0 - hence why the board gene is of length 20 and not 19.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>global</span> ROW_MAP
-ROW_MAP <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([
-    <span style=color:#75715e># Horizontal rows            Reference hexagon indices</span>
-    [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],             
-    [<span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>5</span>, <span style=color:#ae81ff>6</span>, <span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>0</span>],             <span style=color:#75715e>#       1   2   3</span>
-    [<span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>9</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>11</span>, <span style=color:#ae81ff>12</span>],          <span style=color:#75715e>#     4   5   6   7</span>
-    [<span style=color:#ae81ff>13</span>, <span style=color:#ae81ff>14</span>, <span style=color:#ae81ff>15</span>, <span style=color:#ae81ff>16</span>, <span style=color:#ae81ff>0</span>],         <span style=color:#75715e>#   8   9  10  11  12 </span>
-    [<span style=color:#ae81ff>17</span>, <span style=color:#ae81ff>18</span>, <span style=color:#ae81ff>19</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],          <span style=color:#75715e>#    13  14  15  16 </span>
-    <span style=color:#75715e># Top -&gt; bottom left                17  18  19  </span>
-    [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],              
-    [<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>5</span>, <span style=color:#ae81ff>9</span>, <span style=color:#ae81ff>13</span>, <span style=color:#ae81ff>0</span>],      <span style=color:#75715e># Notice how the indices to the left refer</span>
-    [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>6</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>14</span>, <span style=color:#ae81ff>17</span>],    <span style=color:#75715e># to all 15 possible rows on the hexagon      </span>
-    [<span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>11</span>, <span style=color:#ae81ff>15</span>, <span style=color:#ae81ff>18</span>, <span style=color:#ae81ff>0</span>],
-    [<span style=color:#ae81ff>12</span>, <span style=color:#ae81ff>16</span>, <span style=color:#ae81ff>19</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],
-    <span style=color:#75715e># Top -&gt; bottom right</span>
-    [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>12</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],
-    [<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>6</span>, <span style=color:#ae81ff>11</span>, <span style=color:#ae81ff>16</span>, <span style=color:#ae81ff>0</span>],
-    [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>5</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>15</span>, <span style=color:#ae81ff>19</span>],
-    [<span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>9</span>, <span style=color:#ae81ff>14</span>, <span style=color:#ae81ff>18</span>, <span style=color:#ae81ff>0</span>],
-    [<span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>13</span>, <span style=color:#ae81ff>17</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>]
-])
-
-<span style=color:#75715e># The population is modified to include a 0 at the 0ᵗʰ index of each gene. </span>
-zero_padding <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>zeros(self<span style=color:#f92672>.</span>p_size, dtype<span style=color:#f92672>=</span>np<span style=color:#f92672>.</span>uint8)[:,<span style=color:#66d9ef>None</span>]
-population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>hstack((zero_padding, population))
-
-<span style=color:#75715e># Simply the opposite of fitness; the lower the cost, the higher the fitness</span>
-<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>get_cost</span>(self, population):
-
-    row_sums <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>sum(population[:, ROW_MAP], axis<span style=color:#f92672>=</span><span style=color:#ae81ff>2</span>)
-    row_diff <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>abs(M <span style=color:#f92672>-</span> row_sums)
-
-    <span style=color:#66d9ef>return</span> np<span style=color:#f92672>.</span>sum(row_diff, axis<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span>)
-</code></pre></div><blockquote>
-<p>Selection & Cloning</p>
-</blockquote>
-<p>After applying the fitness function above to each member of the population, the best <code>n_candidates</code> are selected. The candidates are then cloned, mutated, and the old population is replaced with spritely new boards.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>select_best</span>(self, population):
-
-    <span style=color:#75715e># how many times to clone each candidate</span>
-    cloning_factor <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>p_size <span style=color:#f92672>//</span> self<span style=color:#f92672>.</span>n_candidates
-
-    costs <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>get_cost(population)
-    fittest_indices <span style=color:#f92672>=</span> costs<span style=color:#f92672>.</span>argsort()[:self<span style=color:#f92672>.</span>n_candidates]
-    fittest <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>repeat(population[fittest_indices], cloning_factor, axis<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)
-
-    <span style=color:#66d9ef>return</span> fittest, costs<span style=color:#f92672>.</span>min() <span style=color:#75715e># also return the fitness of the best gene</span>
-
-</code></pre></div><blockquote>
-<p>Mutation</p>
-</blockquote>
-<p>The solution to the puzzle lies somewhere in the search space of all possible boards. A naïve way to explore this space is to continuously swap two tiles on the board at random. After selecting a pool of candidate solutions, two random indices are simultaneously picked for each candidate and then swapped. In other words, every gene is mutated in the hope that some of them exhibit higher fitness or become pioneers in the unexplored search space.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>mutate</span>(self, candidates):
-
-    <span style=color:#75715e># Don&#39;t swap the 0ᵗʰ index!</span>
-    swaps <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>randint(<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>20</span>, size<span style=color:#f92672>=</span>(<span style=color:#ae81ff>2</span>, self<span style=color:#f92672>.</span>n_candidates)) 
-    indices <span style=color:#f92672>=</span> range(self<span style=color:#f92672>.</span>n_candidates) <span style=color:#75715e># needed to index each gene - different to &#39;:&#39;</span>
-
-    temp <span style=color:#f92672>=</span> candidates[indices, swaps[<span style=color:#ae81ff>0</span>]]
-    candidates[indices, swaps[<span style=color:#ae81ff>0</span>]] <span style=color:#f92672>=</span> candidates[indices, swaps[<span style=color:#ae81ff>1</span>]]
-    candidates[indices, swaps[<span style=color:#ae81ff>1</span>]] <span style=color:#f92672>=</span> temp
-
-    <span style=color:#66d9ef>return</span> candidates
-</code></pre></div><blockquote>
-<p>Evolutionary loop</p>
-</blockquote>
-<p>We now weave all of our functions in one evolutionary loop. Notice the similarity with the general EA algorithm described <a href=#evolutionary-algorithms>above</a>. We&rsquo;ll add an &lsquo;optimization&rsquo; mode to the search for when we want to fine tune its parameters.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> time
-
-<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>search</span>(self, optimizing<span style=color:#f92672>=</span><span style=color:#66d9ef>False</span>):
-
-    population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([
-        np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>permutation(<span style=color:#ae81ff>19</span>) <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(self<span style=color:#f92672>.</span>p_size)
-    ])
-    zero_padding <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>zeros(self<span style=color:#f92672>.</span>p_size, dtype<span style=color:#f92672>=</span>np<span style=color:#f92672>.</span>uint8)[:,<span style=color:#66d9ef>None</span>]
-    population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>hstack((zero_padding, population))
-
-    candidates, cost <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>select_best(population)
-    
-    <span style=color:#75715e># Keep track of the time and no. of iterations</span>
-    time_start <span style=color:#f92672>=</span> time<span style=color:#f92672>.</span>time() 
-    i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span> 
-    <span style=color:#66d9ef>while</span> cost <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>0</span>: <span style=color:#75715e># convergence criterion</span>
-        i <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
-        population <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>mutate(candidates)
-        candidates, cost <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>select_best(population) <span style=color:#75715e># &#39;cost&#39; is the evaluation</span>
-    time_elapsed <span style=color:#f92672>=</span> time<span style=color:#f92672>.</span>time() <span style=color:#f92672>-</span> time_start
-
-    <span style=color:#66d9ef>if</span> optimizing: <span style=color:#66d9ef>return</span> i
-    <span style=color:#66d9ef>else</span>: <span style=color:#75715e># retrieve the best candidate - the solution to the puzzle</span>
-        costs <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>get_cost(candidates)
-        best_candidate <span style=color:#f92672>=</span> candidates[costs<span style=color:#f92672>.</span>argsort()[<span style=color:#ae81ff>0</span>]]
-        display_board(best_candidate, i, time_elapsed) 
-</code></pre></div><p>Finally, we write method to display the board in a more readable way once (if) a solution is found.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>display_board</span>(self, board, i, time):
-    <span style=color:#75715e># convert numbers to strings (with 0s in front of numbers &lt; 10)</span>
-    board_str <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#39;</span><span style=color:#e6db74>{}</span><span style=color:#e6db74>&#39;</span><span style=color:#f92672>.</span>format(t) <span style=color:#66d9ef>if</span> t <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>9</span> <span style=color:#66d9ef>else</span> <span style=color:#e6db74>&#39;0</span><span style=color:#e6db74>{}</span><span style=color:#e6db74>&#39;</span><span style=color:#f92672>.</span>format(t) <span style=color:#66d9ef>for</span> t <span style=color:#f92672>in</span> board[<span style=color:#ae81ff>1</span>:]]
-    template <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;&#39;&#39;
-</span><span style=color:#e6db74>        Solution found!
-</span><span style=color:#e6db74>
-</span><span style=color:#e6db74>           </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
-</span><span style=color:#e6db74>          </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
-</span><span style=color:#e6db74>        </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
-</span><span style=color:#e6db74>          </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
-</span><span style=color:#e6db74>           </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74>
-</span><span style=color:#e6db74>
-</span><span style=color:#e6db74>        </span><span style=color:#e6db74>{:.2e}</span><span style=color:#e6db74> iterations
-</span><span style=color:#e6db74>        </span><span style=color:#e6db74>{:.2e}</span><span style=color:#e6db74> seconds
-</span><span style=color:#e6db74>    &#39;&#39;&#39;</span>
-    print(template<span style=color:#f92672>.</span>format(<span style=color:#f92672>*</span>board_str, i, time))
-</code></pre></div><p>That&rsquo;s all there is to it! Now to check if everything works&mldr; let&rsquo;s plug in a population size and proportion of candidates.</p>
-<pre tabindex=0><code class=language-shellsession data-lang=shellsession>src$ python -i magic_hexagon.py # run in interpretable mode
+Illustrated above are the principles of Darwinian natural selection. During reporoduction, the genetic material or <strong>genotype</strong> of an organism is passed on to its offspring. The organism&rsquo;s <strong>phenotype</strong> are manifestations of its genes, altering it&rsquo;s appearance or behaviour. Natural selection operates not an an organism&rsquo;s genes, but on the final product; it&rsquo;s phenotype. It is the environment that shapes the organism, and individuals better suited to the environment are more likely to reproduce and pass on traits to offspring.</p><p>Artifical evolution and EAs take inspiration from their natural counterpart as a heuristic for finding solutions to hard, <a href=https://www.britannica.com/science/NP-complete-problem>often NP</a>, problems. EAs attempts to find an optimal state to a problem, and are characterised by a <strong>genetic representation</strong> of the state, a <strong>population</strong> of genes, a <strong>fitness function</strong> to evaluate each gene, a <strong>selection</strong> method for selecting candidate genes, a <strong>mutation</strong> method for mutating a pool of canditates and a <strong>replacement</strong> method for determining how the old population is updated. An example evolutionary loop of an EA is shown below. Due to the randomness of mutations, it is possible that the algorithm never converges! A <strong>convergence criterion</strong> is therefore also included to monitor the performance of the loop, stopping it if necessary.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>while</span> <span style=color:#66d9ef>True</span>:
+</span></span><span style=display:flex><span>	<span style=color:#75715e># Create offspring population</span>
+</span></span><span style=display:flex><span>    candidates <span style=color:#f92672>=</span> select(population)
+</span></span><span style=display:flex><span>    offspring  <span style=color:#f92672>=</span> mutate(candidates)
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Update population </span>
+</span></span><span style=display:flex><span>    population <span style=color:#f92672>=</span> update_population(population, offspring)
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Convergence criterion</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> check_convergence(population):
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>break</span>
+</span></span></code></pre></div><h2 id=implementation>Implementation<a href=#implementation class=hanchor arialabel=Anchor>&#8983;</a> </h2><p>Armed with sufficient background in EAs, it is time to solve the impossible puzzle. First, we create a class for our solver and then define each of its components adhering to the principles of EAs. The algorithm only takes two parameters:</p><ul>
+<li><code>p_size</code> :: the number of genes in the population</li><li><code>p_cand</code> :: the proportion of candidate genes to select from the population</li></ul><p>The thinking behind choosing the <em>proportion</em> of candidates as opposed to a the <em>number</em> of candidates as hyperparameter is to reduce it&rsquo;s dependency on <code>p_cand</code>. An experiment with a population of 50 and 5 candidates vs. a population of 100 and 10 candidates is essentially the same experiment at different scales, since the population to candidate ratio is the same; 50:5 = 100:10 = 10:1. Change the proportion, and you have a new experiment.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#f92672>import</span> numpy <span style=color:#66d9ef>as</span> np
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MagicHexSolver</span>():
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>global</span> M
+</span></span><span style=display:flex><span>    M <span style=color:#f92672>=</span> <span style=color:#ae81ff>38</span>   <span style=color:#75715e># The magic number</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> __init__(self, 
+</span></span><span style=display:flex><span>        p_size: int, <span style=color:#75715e># population size</span>
+</span></span><span style=display:flex><span>        p_cand: int  <span style=color:#75715e># proportion of candidates</span>
+</span></span><span style=display:flex><span>    ):
+</span></span><span style=display:flex><span>        self<span style=color:#f92672>.</span>p_size <span style=color:#f92672>=</span> p_size 
+</span></span><span style=display:flex><span>        self<span style=color:#f92672>.</span>n_candidates <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>get_n_candidates(p_size, p_cand)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>get_n_candidates</span>(self, p_size, p_cand):
+</span></span><span style=display:flex><span>        <span style=color:#75715e># factors of p_size</span>
+</span></span><span style=display:flex><span>        cs <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([c <span style=color:#66d9ef>for</span> c <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>1</span>, p_size<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>) <span style=color:#66d9ef>if</span> p_size <span style=color:#f92672>%</span> c <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>])
+</span></span><span style=display:flex><span>        <span style=color:#75715e># choose closest factor as n_candidates</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> cs[np<span style=color:#f92672>.</span>abs(cs <span style=color:#f92672>-</span> int(p_size <span style=color:#f92672>*</span> p_cand))<span style=color:#f92672>.</span>argmin()] 
+</span></span></code></pre></div><blockquote>
+<p>Genetic representation & population</p></blockquote><p>This is as simple as &lsquo;flattening&rsquo; the board into a 1D array of integers to represent each tile. The tiles of the initial boards are assumed to be randomly placed, so the initial population of size <code>p_size</code> is instantiated with a simple list comprehension.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([
+</span></span><span style=display:flex><span>    np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>permutation(<span style=color:#ae81ff>19</span>) <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(self<span style=color:#f92672>.</span>p_size)
+</span></span><span style=display:flex><span>])
+</span></span></code></pre></div><blockquote>
+<p>Fitness function</p></blockquote><p>This part is a bit trickier, since each row of each board needs evaluating at each iteration, and there may be millions of iterations required until convergence! For-loops are inefficient and won&rsquo;t do - Numpy indexing to the rescue.</p><p>Recall the goal of the puzzle: each row of the hexagon in every direction must sum to the same magic constant <code>M</code>. Notice that 5/15 rows can be obtained by taking each horizontal row. By then taking the diagonal rows of the hexagon from top to bottom left and from top to bottom right, all 15 rows can be addressed.
+Broadcast indexing a board gene with a tedious map of each possible row results in a matrix of all 15 rows of that board. It is then easy to check whether each row results in the same sum.</p><p>There&rsquo;s now one final catch: the rows of the hexagon aren&rsquo;t the same length. This is dealt with by padding each row in the map with zeros, and making the 0ᵗʰ element of the board gene also 0 - hence why the board gene is of length 20 and not 19.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>global</span> ROW_MAP
+</span></span><span style=display:flex><span>ROW_MAP <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Horizontal rows            Reference hexagon indices</span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],             
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>5</span>, <span style=color:#ae81ff>6</span>, <span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>0</span>],             <span style=color:#75715e>#       1   2   3</span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>9</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>11</span>, <span style=color:#ae81ff>12</span>],          <span style=color:#75715e>#     4   5   6   7</span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>13</span>, <span style=color:#ae81ff>14</span>, <span style=color:#ae81ff>15</span>, <span style=color:#ae81ff>16</span>, <span style=color:#ae81ff>0</span>],         <span style=color:#75715e>#   8   9  10  11  12 </span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>17</span>, <span style=color:#ae81ff>18</span>, <span style=color:#ae81ff>19</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],          <span style=color:#75715e>#    13  14  15  16 </span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Top -&gt; bottom left                17  18  19  </span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],              
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>5</span>, <span style=color:#ae81ff>9</span>, <span style=color:#ae81ff>13</span>, <span style=color:#ae81ff>0</span>],      <span style=color:#75715e># Notice how the indices to the left refer</span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>6</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>14</span>, <span style=color:#ae81ff>17</span>],    <span style=color:#75715e># to all 15 possible rows on the hexagon      </span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>11</span>, <span style=color:#ae81ff>15</span>, <span style=color:#ae81ff>18</span>, <span style=color:#ae81ff>0</span>],
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>12</span>, <span style=color:#ae81ff>16</span>, <span style=color:#ae81ff>19</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Top -&gt; bottom right</span>
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>7</span>, <span style=color:#ae81ff>12</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>],
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>6</span>, <span style=color:#ae81ff>11</span>, <span style=color:#ae81ff>16</span>, <span style=color:#ae81ff>0</span>],
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>5</span>, <span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>15</span>, <span style=color:#ae81ff>19</span>],
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>9</span>, <span style=color:#ae81ff>14</span>, <span style=color:#ae81ff>18</span>, <span style=color:#ae81ff>0</span>],
+</span></span><span style=display:flex><span>    [<span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>13</span>, <span style=color:#ae81ff>17</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>]
+</span></span><span style=display:flex><span>])
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># The population is modified to include a 0 at the 0ᵗʰ index of each gene. </span>
+</span></span><span style=display:flex><span>zero_padding <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>zeros(self<span style=color:#f92672>.</span>p_size, dtype<span style=color:#f92672>=</span>np<span style=color:#f92672>.</span>uint8)[:,<span style=color:#66d9ef>None</span>]
+</span></span><span style=display:flex><span>population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>hstack((zero_padding, population))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># Simply the opposite of fitness; the lower the cost, the higher the fitness</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>get_cost</span>(self, population):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    row_sums <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>sum(population[:, ROW_MAP], axis<span style=color:#f92672>=</span><span style=color:#ae81ff>2</span>)
+</span></span><span style=display:flex><span>    row_diff <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>abs(M <span style=color:#f92672>-</span> row_sums)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> np<span style=color:#f92672>.</span>sum(row_diff, axis<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span>)
+</span></span></code></pre></div><blockquote>
+<p>Selection & Cloning</p></blockquote><p>After applying the fitness function above to each member of the population, the best <code>n_candidates</code> are selected. The candidates are then cloned, mutated, and the old population is replaced with spritely new boards.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>select_best</span>(self, population):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># how many times to clone each candidate</span>
+</span></span><span style=display:flex><span>    cloning_factor <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>p_size <span style=color:#f92672>//</span> self<span style=color:#f92672>.</span>n_candidates
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    costs <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>get_cost(population)
+</span></span><span style=display:flex><span>    fittest_indices <span style=color:#f92672>=</span> costs<span style=color:#f92672>.</span>argsort()[:self<span style=color:#f92672>.</span>n_candidates]
+</span></span><span style=display:flex><span>    fittest <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>repeat(population[fittest_indices], cloning_factor, axis<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> fittest, costs<span style=color:#f92672>.</span>min() <span style=color:#75715e># also return the fitness of the best gene</span>
+</span></span></code></pre></div><blockquote>
+<p>Mutation</p></blockquote><p>The solution to the puzzle lies somewhere in the search space of all possible boards. A naïve way to explore this space is to continuously swap two tiles on the board at random. After selecting a pool of candidate solutions, two random indices are simultaneously picked for each candidate and then swapped. In other words, every gene is mutated in the hope that some of them exhibit higher fitness or become pioneers in the unexplored search space.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>mutate</span>(self, candidates):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Don&#39;t swap the 0ᵗʰ index!</span>
+</span></span><span style=display:flex><span>    swaps <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>randint(<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>20</span>, size<span style=color:#f92672>=</span>(<span style=color:#ae81ff>2</span>, self<span style=color:#f92672>.</span>n_candidates)) 
+</span></span><span style=display:flex><span>    indices <span style=color:#f92672>=</span> range(self<span style=color:#f92672>.</span>n_candidates) <span style=color:#75715e># needed to index each gene - different to &#39;:&#39;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    temp <span style=color:#f92672>=</span> candidates[indices, swaps[<span style=color:#ae81ff>0</span>]]
+</span></span><span style=display:flex><span>    candidates[indices, swaps[<span style=color:#ae81ff>0</span>]] <span style=color:#f92672>=</span> candidates[indices, swaps[<span style=color:#ae81ff>1</span>]]
+</span></span><span style=display:flex><span>    candidates[indices, swaps[<span style=color:#ae81ff>1</span>]] <span style=color:#f92672>=</span> temp
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> candidates
+</span></span></code></pre></div><blockquote>
+<p>Evolutionary loop</p></blockquote><p>We now weave all of our functions in one evolutionary loop. Notice the similarity with the general EA algorithm described <a href=#evolutionary-algorithms>above</a>. We&rsquo;ll add an &lsquo;optimization&rsquo; mode to the search for when we want to fine tune its parameters.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#f92672>import</span> time
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>search</span>(self, optimizing<span style=color:#f92672>=</span><span style=color:#66d9ef>False</span>):
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>array([
+</span></span><span style=display:flex><span>        np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>permutation(<span style=color:#ae81ff>19</span>) <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> range(self<span style=color:#f92672>.</span>p_size)
+</span></span><span style=display:flex><span>    ])
+</span></span><span style=display:flex><span>    zero_padding <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>zeros(self<span style=color:#f92672>.</span>p_size, dtype<span style=color:#f92672>=</span>np<span style=color:#f92672>.</span>uint8)[:,<span style=color:#66d9ef>None</span>]
+</span></span><span style=display:flex><span>    population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>hstack((zero_padding, population))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    candidates, cost <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>select_best(population)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e># Keep track of the time and no. of iterations</span>
+</span></span><span style=display:flex><span>    time_start <span style=color:#f92672>=</span> time<span style=color:#f92672>.</span>time() 
+</span></span><span style=display:flex><span>    i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span> 
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>while</span> cost <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>0</span>: <span style=color:#75715e># convergence criterion</span>
+</span></span><span style=display:flex><span>        i <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>        population <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>mutate(candidates)
+</span></span><span style=display:flex><span>        candidates, cost <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>select_best(population) <span style=color:#75715e># &#39;cost&#39; is the evaluation</span>
+</span></span><span style=display:flex><span>    time_elapsed <span style=color:#f92672>=</span> time<span style=color:#f92672>.</span>time() <span style=color:#f92672>-</span> time_start
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> optimizing: <span style=color:#66d9ef>return</span> i
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>else</span>: <span style=color:#75715e># retrieve the best candidate - the solution to the puzzle</span>
+</span></span><span style=display:flex><span>        costs <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>get_cost(candidates)
+</span></span><span style=display:flex><span>        best_candidate <span style=color:#f92672>=</span> candidates[costs<span style=color:#f92672>.</span>argsort()[<span style=color:#ae81ff>0</span>]]
+</span></span><span style=display:flex><span>        display_board(best_candidate, i, time_elapsed) 
+</span></span></code></pre></div><p>Finally, we write method to display the board in a more readable way once (if) a solution is found.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>display_board</span>(self, board, i, time):
+</span></span><span style=display:flex><span>    <span style=color:#75715e># convert numbers to strings (with 0s in front of numbers &lt; 10)</span>
+</span></span><span style=display:flex><span>    board_str <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#39;</span><span style=color:#e6db74>{}</span><span style=color:#e6db74>&#39;</span><span style=color:#f92672>.</span>format(t) <span style=color:#66d9ef>if</span> t <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>9</span> <span style=color:#66d9ef>else</span> <span style=color:#e6db74>&#39;0</span><span style=color:#e6db74>{}</span><span style=color:#e6db74>&#39;</span><span style=color:#f92672>.</span>format(t) <span style=color:#66d9ef>for</span> t <span style=color:#f92672>in</span> board[<span style=color:#ae81ff>1</span>:]]
+</span></span><span style=display:flex><span>    template <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;&#39;&#39;
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        Solution found!
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>           </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>          </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> 
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>           </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74> </span><span style=color:#e6db74>{}</span><span style=color:#e6db74>
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        </span><span style=color:#e6db74>{:.2e}</span><span style=color:#e6db74> iterations
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>        </span><span style=color:#e6db74>{:.2e}</span><span style=color:#e6db74> seconds
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &#39;&#39;&#39;</span>
+</span></span><span style=display:flex><span>    print(template<span style=color:#f92672>.</span>format(<span style=color:#f92672>*</span>board_str, i, time))
+</span></span></code></pre></div><p>That&rsquo;s all there is to it! Now to check if everything works&mldr; let&rsquo;s plug in a population size and proportion of candidates.</p><pre tabindex=0><code class=language-shellsession data-lang=shellsession>src$ python -i magic_hexagon.py # run in interpretable mode
 &gt;&gt;&gt; hexagon = MagicHexSolver(p_size=100, p_cand=0.2)
 &gt;&gt;&gt; hexagon.search()
 
@@ -248,18 +200,10 @@ population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</spa
 
            1.02e+06 iterations
            1.05e+02 seconds
-</code></pre><p>Just like that, our EA solved the unsolvable puzzle. Looking at the runtime, however, it&rsquo;s clear there is some room for improvement. Can we find a better combination of the algorithm&rsquo;s parameters, <code>p_size</code> and <code>p_cand</code>?</p>
-<h2 id=parameter-optimization>Parameter optimization<a href=#parameter-optimization class=hanchor arialabel=Anchor>&#8983;</a> </h2>
-<p>A function&rsquo;s hyperparemeters are like the hot and cold valves of a shower. Both valves need to be <em>just</em> right to get that <em>perfect</em> temperature. Together, the valves explore temperature space in the hope of finding the optimal temperature. Using <code>p_size</code> and <code>p_cand</code> as valves, the space we aim to explore is the EA&rsquo;s efficiency space - that is, a space where each point addresses the average number of iterations needed to meet the optimal convergence criterion.</p>
-<p>Performing parameter search is straightforward: run an experiment on every combination of the parameters and evaluate how well things went. This approach would make my supervisor wince. &ldquo;Parameter search? how boring. Find the <em>exact</em> mathematical solution like a real scientist!&rdquo; Sadly, when dealing with stochastic or nonlinear beasts (as is the case in neural networks), parameter search oftentimes is the simplest and least painful path to an optimal algorithm.</p>
-<img style=width:70%;margin:auto;margin-top:-80px src=../hexagon/runtime_3D.svg alt="The runtime surface varying the population size and the proportion of candidates">
+</code></pre><p>Just like that, our EA solved the unsolvable puzzle. Looking at the runtime, however, it&rsquo;s clear there is some room for improvement. Can we find a better combination of the algorithm&rsquo;s parameters, <code>p_size</code> and <code>p_cand</code>?</p><h2 id=parameter-optimization>Parameter optimization<a href=#parameter-optimization class=hanchor arialabel=Anchor>&#8983;</a> </h2><p>A function&rsquo;s hyperparemeters are like the hot and cold valves of a shower. Both valves need to be <em>just</em> right to get that <em>perfect</em> temperature. Together, the valves explore temperature space in the hope of finding the optimal temperature. Using <code>p_size</code> and <code>p_cand</code> as valves, the space we aim to explore is the EA&rsquo;s efficiency space - that is, a space where each point addresses the average number of iterations needed to meet the optimal convergence criterion.</p><p>Performing parameter search is straightforward: run an experiment on every combination of the parameters and evaluate how well things went. This approach would make my supervisor wince. &ldquo;Parameter search? how boring. Find the <em>exact</em> mathematical solution like a real scientist!&rdquo; Sadly, when dealing with stochastic or nonlinear beasts (as is the case in neural networks), parameter search oftentimes is the simplest and least painful path to an optimal algorithm.</p><img style=width:70%;margin:auto;margin-top:-80px src=../hexagon/runtime_3D.svg alt="The runtime surface varying the population size and the proportion of candidates">
 </img>
-<p>Since we&rsquo;re dealing with a stochastic algorithm, we can only <em>estimate</em> the performance of the EA averaged over several runs. Selecting the optimal set of parameters, therefore, should be based on more than just the speed of finding a solution. The variance of our observations should also be taken into account; we aim to minimize both the variance and the mean of search iterations given a set of parameters. A harmonic mean is the way to go for this type of evaluation, and is defined as</p>
-<p>\[ H(\mu, \sigma) = {\left(0.5 \left(\frac{1}{1 - \mu} + \frac{1}{1 - \sigma} \right) \right)^{-1}} \]</p>
-<p>where the mean and variance \(\mu, \sigma \in [ε, 1] \) are both normalized beteween 1 and a tiny non-zero value. You can see how the harmonic mean values both a low variance and low mean in the plot below:</p>
-<img style=width:70%;margin:auto;margin-top:-80px src=../hexagon/harmonic_mean.svg alt></img>
-<p>It took 48 hours to average over 20 runs on 400 different parameter combinations. Once my CPU&rsquo;s agony was over, I found an optimal set of paramers which gave a considerble improvement in search time.</p>
-<pre tabindex=0><code class=language-shellsession data-lang=shellsession>&gt;&gt;&gt; hexagon = MagicHexSolver(p_size=25, p_cand=0.0925)
+<p>Since we&rsquo;re dealing with a stochastic algorithm, we can only <em>estimate</em> the performance of the EA averaged over several runs. Selecting the optimal set of parameters, therefore, should be based on more than just the speed of finding a solution. The variance of our observations should also be taken into account; we aim to minimize both the variance and the mean of search iterations given a set of parameters. A harmonic mean is the way to go for this type of evaluation, and is defined as</p><p>\[ H(\mu, \sigma) = {\left(0.5 \left(\frac{1}{1 - \mu} + \frac{1}{1 - \sigma} \right) \right)^{-1}} \]</p><p>where the mean and variance \(\mu, \sigma \in [ε, 1] \) are both normalized beteween 1 and a tiny non-zero value. You can see how the harmonic mean values both a low variance and low mean in the plot below:</p><img style=width:70%;margin:auto;margin-top:-80px src=../hexagon/harmonic_mean.svg alt></img>
+<p>It took 48 hours to average over 20 runs on 400 different parameter combinations. Once my CPU&rsquo;s agony was over, I found an optimal set of paramers which gave a considerble improvement in search time.</p><pre tabindex=0><code class=language-shellsession data-lang=shellsession>&gt;&gt;&gt; hexagon = MagicHexSolver(p_size=25, p_cand=0.0925)
 &gt;&gt;&gt; hexagon.search()
 
             Solution found!
@@ -272,85 +216,29 @@ population <span style=color:#f92672>=</span> np<span style=color:#f92672>.</spa
 
            3.48e+03 iterations
            2.26e-01 seconds
-</code></pre><p>This leaves us with 293-fold increase in speed compared to previous choice of parameters. Not bad at all. At this point I should&rsquo;ve called it a day, posted my findings, replaced my now damaged laptop&rsquo;s battery and moved on to other puzzles. But curiousity got the better of me; I wanted to understand the statistical workings of the EA, and eventually predict its runtime. How hard could this be?</p>
-<h2 id=further-exploration>Further exploration<a href=#further-exploration class=hanchor arialabel=Anchor>&#8983;</a> </h2>
-<p>We know <em>how</em> the algorithm works; keep mutating and evolving and eventually the optimal gene appears. But <em>why</em> does it find a solution? can we understand its runtime? I&rsquo;ve spent the past week trying to unpack these questions (probably longer than I did building the algorithm) and the conclusion is, well, I can&rsquo;t. If I did, things would look more like a paper than a blogpost. Nevertheless, I learnt a lot from the various headscratchers and pitfalls that took up my week, and have laid the groundwork for some interesting future experiments. My supervisor is right - parameter search <em>is</em> a bit boring. Chipping away at the opaque maths behind an EA&rsquo;s convergent properties could give a more grounded justification for choosing its parameters. Better yet, characterizing an EAs runtime would allow for concrete comparisons between it and other algorithms. As I&rsquo;ve come to learn, these tasks aren&rsquo;t trivial (at all). The following ideas are <em>just</em> ideas; sadly not conclusions. They&rsquo;ll serve as a landmark for me to come back to (eventually).</p>
-<blockquote>
-<p>Thinking about convergence</p>
-</blockquote>
-<p>To converge is to tend towards a definite limit. For us, that limit is the solution of the puzzle, the highest attainable fitness of any gene. We&rsquo;ve already seen that our EA converged to a solution, but how can we be sure that it does so every new run? What is it about different sets of parameters that leads to exponentially longer and unreliable times taken to converge? Understanding the true runtime and convergent properties of EAs is a whole field in an of itself [1] and is doused in obscure probability theory. I took module on randomised runtime analysis last semester, spent the past week going over relevant lectures and parpers, and <em>still</em> barely understand how to apply some of these cryptic ideas to real, non-trivial problems. I decided to take a simpler route to gain an intuition as to what&rsquo;s really going on under the hood of our EA.</p>
-<p>Recall the gist of the algorithm; start with a population, select the top candidates, clone and mutate them, replace the population, repeat. To find a solution means to consistently choose the correct mutations until, like magic, the fish grows legs.</p>
-<img style=width:65%;margin:auto src=../hexagon/markov.svg alt></img>
-<p>The figure above is an example of a <a href=https://en.wikipedia.org/wiki/Markov_chain>Markov chain</a>, and is a common and simple way to represent the evolution of an EA<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>. It shows that set of states with optimal fitness \( f^* \) is attainable by making the correct sequence of transitions \[ f^{i} \xrightarrow{P_{f+1}} f^{i+1} \] where \( P_{f+1} \) is the probability of increasing fitness from a given state. So far so good. But our algorithm isn&rsquo;t elitist<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>, in the sense that fitness from population to population can drop - so we also need to incorporate the likelihood of <em>dropping</em> from one state to another. Sadly, things get even more complicated; for visual sinplicity, the diagram doesn&rsquo;t include every transition mapping each state to every other one, i.e. \( P_{f+2} \), \( P_{f+3} \), etc., and swapping a tile can increase the fitness by more than one, so these also need to be considered. What a mess.</p>
-<blockquote>
-<p>Monte-Carlo Sampling</p>
-</blockquote>
-<p>We&rsquo;re interested in \( P_{f > 0}(s, t_1, t_2) \); the probability that a random swapping of tiles \( t_1 \in T_1 \) and \( t_2 \in T_2 \) improves a state \( s \in S \)&rsquo;s fitness. There are three discrete random variables to take into account here: \(T_1\), \(T_2\) and \(S\):</p>
-<ul>
-<li>\(P_{S}(s) = \frac{1}{19!} \)  :: starting with a board \( s \)</li>
-<li>\(P_{T_1}(t_1) = \frac{1}{19} \) :: choosing the first tile \( t_1 \)</li>
-<li>\(P_{T_2}(t_2) = \frac{1}{18} \) :: choosing the second tile \( t_2 \)</li>
-</ul>
-<p>From this we can see that there are (19!* 19 * 18) ÷ 6 possible probabilities to account for that make up the &lsquo;mutation distribution&rsquo; (dividing by 6 for symmetry). In other words, just shy of the number of grains of sand on Earth. I don&rsquo;t have the millions of years it would take for my laptop to compute each of them. Fortunately, we can use Monte-Carlo sampling (the same principle behind stochastic gradient descent) to <em>estimate</em> the probability distribution:</p>
-<p>\[ \mathbb{E}[P_{f > 0}] ≈ \frac{1}{N} \sum_S \sum_{T1} \sum_{T2} P_{f > 0}\left(s, t_1, t_2 \right) \]</p>
-<p>After a few samples, say, 500,000,000, we obtain reasonable estamates of the starting distribution of fitness and the initial fitness improvement \( P_{f > 0}(s, t_1, t_2) \):</p>
-<img style=width:70%;margin:auto src=../hexagon/monte.svg alt></img>
-<p>This gives an estimate for \( \mathbb{E}[f] ≈ \) 425 and for \( \mathbb{E}[P_{f > 0}] ≈ \) 0.38. In other words, the average initial starting fitness of a population is roughly 425, and there is a roughly 2/5 chance of improvement in fitness when a board from this population is mutated. If I someday manage to work out how to model the runtime of this mysterious EA, maybe Monte-Carlo sampling could be a way to validate statistical models?</p>
-<blockquote>
-<p>Observing convergence</p>
-</blockquote>
-<p>In [2], it was noted that the runtime analyis of EAs has to be modified to the time when they coverge <em>around</em> optimal solutions. It&rsquo;s relatively easy to get close to solving a problem, and the optimal solution is more likely to reside around states with better fitness. When running the EA, the same rapid increase in fitness is observed in the first few runs. I wanted to see for myself how the average distribution of fitness over many populations changed over time, so I varied the number of iterations the EA could run for and recorded the average final distribution of fitness.</p>
-<p>The results allow us to watch how many populations behave. It&rsquo;s clear that they converge to some fitness space that&rsquo;s doesn&rsquo;t <em>quite</em> contain the optimal solution. The properties of the new distribution (in green) are also essentially identical to its unfit predecessor.</p>
-<img id=convergence_gif style=width:70%;margin:auto src=../hexagon/convergence.png alt></img>
-<p>There also apprears to be a relationship between the mean and variance of the distribution as it gradually improves, which is better shown on the phase-space scatter plot of mean against variance. Using dynamical systems terms, there is an &lsquo;attractor&rsquo; on the distribution&rsquo;s mean and variance at the point of convergence.</p>
-<img style=width:50%;margin-top:-10px;float:left src=../hexagon/convergence.svg alt></img>
+</code></pre><p>This leaves us with 293-fold increase in speed compared to previous choice of parameters. Not bad at all. At this point I should&rsquo;ve called it a day, posted my findings, replaced my now damaged laptop&rsquo;s battery and moved on to other puzzles. But curiousity got the better of me; I wanted to understand the statistical workings of the EA, and eventually predict its runtime. How hard could this be?</p><h2 id=further-exploration>Further exploration<a href=#further-exploration class=hanchor arialabel=Anchor>&#8983;</a> </h2><p>We know <em>how</em> the algorithm works; keep mutating and evolving and eventually the optimal gene appears. But <em>why</em> does it find a solution? can we understand its runtime? I&rsquo;ve spent the past week trying to unpack these questions (probably longer than I did building the algorithm) and the conclusion is, well, I can&rsquo;t. If I did, things would look more like a paper than a blogpost. Nevertheless, I learnt a lot from the various headscratchers and pitfalls that took up my week, and have laid the groundwork for some interesting future experiments. My supervisor is right - parameter search <em>is</em> a bit boring. Chipping away at the opaque maths behind an EA&rsquo;s convergent properties could give a more grounded justification for choosing its parameters. Better yet, characterizing an EAs runtime would allow for concrete comparisons between it and other algorithms. As I&rsquo;ve come to learn, these tasks aren&rsquo;t trivial (at all). The following ideas are <em>just</em> ideas; sadly not conclusions. They&rsquo;ll serve as a landmark for me to come back to (eventually).</p><blockquote>
+<p>Thinking about convergence</p></blockquote><p>To converge is to tend towards a definite limit. For us, that limit is the solution of the puzzle, the highest attainable fitness of any gene. We&rsquo;ve already seen that our EA converged to a solution, but how can we be sure that it does so every new run? What is it about different sets of parameters that leads to exponentially longer and unreliable times taken to converge? Understanding the true runtime and convergent properties of EAs is a whole field in an of itself [1] and is doused in obscure probability theory. I took module on randomised runtime analysis last semester, spent the past week going over relevant lectures and parpers, and <em>still</em> barely understand how to apply some of these cryptic ideas to real, non-trivial problems. I decided to take a simpler route to gain an intuition as to what&rsquo;s really going on under the hood of our EA.</p><p>Recall the gist of the algorithm; start with a population, select the top candidates, clone and mutate them, replace the population, repeat. To find a solution means to consistently choose the correct mutations until, like magic, the fish grows legs.</p><img style=width:65%;margin:auto src=../hexagon/markov.svg alt></img>
+<p>The figure above is an example of a <a href=https://en.wikipedia.org/wiki/Markov_chain>Markov chain</a>, and is a common and simple way to represent the evolution of an EA<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>. It shows that set of states with optimal fitness \( f^* \) is attainable by making the correct sequence of transitions \[ f^{i} \xrightarrow{P_{f+1}} f^{i+1} \] where \( P_{f+1} \) is the probability of increasing fitness from a given state. So far so good. But our algorithm isn&rsquo;t elitist<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>, in the sense that fitness from population to population can drop - so we also need to incorporate the likelihood of <em>dropping</em> from one state to another. Sadly, things get even more complicated; for visual sinplicity, the diagram doesn&rsquo;t include every transition mapping each state to every other one, i.e. \( P_{f+2} \), \( P_{f+3} \), etc., and swapping a tile can increase the fitness by more than one, so these also need to be considered. What a mess.</p><blockquote>
+<p>Monte-Carlo Sampling</p></blockquote><p>We&rsquo;re interested in \( P_{f > 0}(s, t_1, t_2) \); the probability that a random swapping of tiles \( t_1 \in T_1 \) and \( t_2 \in T_2 \) improves a state \( s \in S \)&rsquo;s fitness. There are three discrete random variables to take into account here: \(T_1\), \(T_2\) and \(S\):</p><ul>
+<li>\(P_{S}(s) = \frac{1}{19!} \)  :: starting with a board \( s \)</li><li>\(P_{T_1}(t_1) = \frac{1}{19} \) :: choosing the first tile \( t_1 \)</li><li>\(P_{T_2}(t_2) = \frac{1}{18} \) :: choosing the second tile \( t_2 \)</li></ul><p>From this we can see that there are (19!* 19 * 18) ÷ 6 possible probabilities to account for that make up the &lsquo;mutation distribution&rsquo; (dividing by 6 for symmetry). In other words, just shy of the number of grains of sand on Earth. I don&rsquo;t have the millions of years it would take for my laptop to compute each of them. Fortunately, we can use Monte-Carlo sampling (the same principle behind stochastic gradient descent) to <em>estimate</em> the probability distribution:</p><p>\[ \mathbb{E}[P_{f > 0}] ≈ \frac{1}{N} \sum_S \sum_{T1} \sum_{T2} P_{f > 0}\left(s, t_1, t_2 \right) \]</p><p>After a few samples, say, 500,000,000, we obtain reasonable estamates of the starting distribution of fitness and the initial fitness improvement \( P_{f > 0}(s, t_1, t_2) \):</p><img style=width:70%;margin:auto src=../hexagon/monte.svg alt></img>
+<p>This gives an estimate for \( \mathbb{E}[f] ≈ \) 425 and for \( \mathbb{E}[P_{f > 0}] ≈ \) 0.38. In other words, the average initial starting fitness of a population is roughly 425, and there is a roughly 2/5 chance of improvement in fitness when a board from this population is mutated. If I someday manage to work out how to model the runtime of this mysterious EA, maybe Monte-Carlo sampling could be a way to validate statistical models?</p><blockquote>
+<p>Observing convergence</p></blockquote><p>In [2], it was noted that the runtime analyis of EAs has to be modified to the time when they coverge <em>around</em> optimal solutions. It&rsquo;s relatively easy to get close to solving a problem, and the optimal solution is more likely to reside around states with better fitness. When running the EA, the same rapid increase in fitness is observed in the first few runs. I wanted to see for myself how the average distribution of fitness over many populations changed over time, so I varied the number of iterations the EA could run for and recorded the average final distribution of fitness.</p><p>The results allow us to watch how many populations behave. It&rsquo;s clear that they converge to some fitness space that&rsquo;s doesn&rsquo;t <em>quite</em> contain the optimal solution. The properties of the new distribution (in green) are also essentially identical to its unfit predecessor.</p><img id=convergence_gif style=width:70%;margin:auto src=../hexagon/convergence.png alt></img>
+<p>There also apprears to be a relationship between the mean and variance of the distribution as it gradually improves, which is better shown on the phase-space scatter plot of mean against variance. Using dynamical systems terms, there is an &lsquo;attractor&rsquo; on the distribution&rsquo;s mean and variance at the point of convergence.</p><img style=width:50%;margin-top:-10px;float:left src=../hexagon/convergence.svg alt></img>
 <img style=width:50%;margin-top:-10px;float:right src=../hexagon/phasespace.svg alt></img>
-<p>If we assume that a population&rsquo;s fitness distribution is Gaussian, maybe the convergence of its mean and variance could be modelled as a set of &lsquo;statistical&rsquo; ordinary differential equations?</p>
-<h2 id=wrapping-up>Wrapping up<a href=#wrapping-up class=hanchor arialabel=Anchor>&#8983;</a> </h2>
-<p>Clifford W. Adams started work on finding a mathematical solution to the Hexagon in 1910 and eventually solved it in 1957. He saw the puzzle in a mathematical journal, wondered how it worked, and proceeded to go down a 47-year-deep rabbit hole. Our EA found solved the puzzle in less than a second, but solutions have fractal borders. I ended up ending more questions than I came in with. I hope that someday I&rsquo;ll write a follow-up to this problem after a <em>lot</em> more background. If you&rsquo;re curious to poke around at the algorithm yourself, <a href=https://github.com/shauncassini/magic-hexagon>feel free</a>. I&rsquo;d love to see what you come up with!</p>
-<p>I&rsquo;d like to thank my housemates for their insights and for putting up with my relentless (maybe a little obsessive) verbal thinking and my friend Nicola Mendini, who love&rsquo;s puzzles as much as I do, and without whom I would still be shuffling tiles around by hand. Above all, I&rsquo;d like to thank my dad for surprising me with this hexagon for Christmas - I told you I&rsquo;d solve it.</p>
-<h2 id=future-work>Future work<a href=#future-work class=hanchor arialabel=Anchor>&#8983;</a> </h2>
-<ul>
-<li>Applying the EA to a simpler problem, say, OneMax<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup> and estimating it&rsquo;s runtime with Drift Analyis [3].</li>
-<li>Modelling how the EA converges to its sub-optimal fitness distribution, possibly though ODEs.</li>
-<li>Using Monte-Carlo sampling techniques to estimate a better Markov chain model.</li>
-<li>Applying the EA to a more challenging problem.</li>
-</ul>
-<h1 id=references>References<a href=#references class=hanchor arialabel=Anchor>&#8983;</a> </h1>
-<p>[1] Katoch, S., Chauhan, S.S. & Kumar, V. A review on genetic algorithm: past, present, and future. Multimed Tools Appl 80, 8091–8126 (2021). <a href=https://doi.org/10.1007/s11042-020-10139-6>https://doi.org/10.1007/s11042-020-10139-6</a></p>
-<p>[2] J. He and G. Lin, &ldquo;Average Convergence Rate of Evolutionary Algorithms,&rdquo; in IEEE Transactions on Evolutionary Computation, vol. 20, no. 2, pp. 316-321, April 2016. <a href=https://doi.org/10.1109/TEVC.2015.2444793>https://doi.org/10.1109/TEVC.2015.2444793</a></p>
-<p>[3] Oliveto P.S., Witt C. (2008) Simplified Drift Analysis for Proving Lower Bounds in Evolutionary Computation. In: Rudolph G., Jansen T., Beume N., Lucas S., Poloni C. (eds) Parallel Problem Solving from Nature – PPSN X. PPSN 2008. Lecture Notes in Computer Science, vol 5199. Springer, Berlin, Heidelberg. <a href=https://doi.org/10.1007/978-3-540-87700-4_9>https://doi.org/10.1007/978-3-540-87700-4_9</a></p>
-<p>[4] Lehre, P. K. (2011). Fitness-levels for non-elitist populations. In Genetic and Evolutionary Computation Conference, GECCO'11 (pp. 2075-2082) <a href=https://doi.org/10.1145/2001576.2001855>https://doi.org/10.1145/2001576.2001855</a></p>
-<h1 id=footnotes>Footnotes<a href=#footnotes class=hanchor arialabel=Anchor>&#8983;</a> </h1>
-<script>var hexagon=document.getElementById('hexagon'),convergence=document.getElementById('convergence_gif');console.log(convergence),hexagon.addEventListener('mouseenter',function(b){hexagon.src='../hexagon/hexagon_solution.png';var a=new Audio('../../hex_shuffle.m4a');a.play()}),hexagon.addEventListener('mouseleave',function(b){hexagon.src='../hexagon/hexagon_scrambled.png';var a=new Audio('../../hex_unshuffle.m4a');a.play()}),convergence.addEventListener('mouseenter',function(a){convergence.src='../hexagon/convergence.gif'}),convergence.addEventListener('mouseleave',function(a){convergence.src='../hexagon/convergence.png'})</script>
+<p>If we assume that a population&rsquo;s fitness distribution is Gaussian, maybe the convergence of its mean and variance could be modelled as a set of &lsquo;statistical&rsquo; ordinary differential equations?</p><h2 id=wrapping-up>Wrapping up<a href=#wrapping-up class=hanchor arialabel=Anchor>&#8983;</a> </h2><p>Clifford W. Adams started work on finding a mathematical solution to the Hexagon in 1910 and eventually solved it in 1957. He saw the puzzle in a mathematical journal, wondered how it worked, and proceeded to go down a 47-year-deep rabbit hole. Our EA found solved the puzzle in less than a second, but solutions have fractal borders. I ended up ending more questions than I came in with. I hope that someday I&rsquo;ll write a follow-up to this problem after a <em>lot</em> more background. If you&rsquo;re curious to poke around at the algorithm yourself, <a href=https://github.com/shauncassini/magic-hexagon>feel free</a>. I&rsquo;d love to see what you come up with!</p><p>I&rsquo;d like to thank my housemates for their insights and for putting up with my relentless (maybe a little obsessive) verbal thinking and my friend Nicola Mendini, who loves puzzles as much as I do, and without whom I would still be shuffling tiles around by hand. Above all, I&rsquo;d like to thank my dad for surprising me with this hexagon for Christmas - I told you I&rsquo;d solve it.</p><h2 id=future-work>Future work<a href=#future-work class=hanchor arialabel=Anchor>&#8983;</a> </h2><ul>
+<li>Applying the EA to a simpler problem, say, OneMax<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup> and estimating it&rsquo;s runtime with Drift Analyis [3].</li><li>Modelling how the EA converges to its sub-optimal fitness distribution, possibly though ODEs.</li><li>Using Monte-Carlo sampling techniques to estimate a better Markov chain model.</li><li>Applying the EA to a more challenging problem.</li></ul><h1 id=references>References<a href=#references class=hanchor arialabel=Anchor>&#8983;</a> </h1><p>[1] Katoch, S., Chauhan, S.S. & Kumar, V. A review on genetic algorithm: past, present, and future. Multimed Tools Appl 80, 8091–8126 (2021). <a href=https://doi.org/10.1007/s11042-020-10139-6>https://doi.org/10.1007/s11042-020-10139-6</a></p><p>[2] J. He and G. Lin, &ldquo;Average Convergence Rate of Evolutionary Algorithms,&rdquo; in IEEE Transactions on Evolutionary Computation, vol. 20, no. 2, pp. 316-321, April 2016. <a href=https://doi.org/10.1109/TEVC.2015.2444793>https://doi.org/10.1109/TEVC.2015.2444793</a></p><p>[3] Oliveto P.S., Witt C. (2008) Simplified Drift Analysis for Proving Lower Bounds in Evolutionary Computation. In: Rudolph G., Jansen T., Beume N., Lucas S., Poloni C. (eds) Parallel Problem Solving from Nature – PPSN X. PPSN 2008. Lecture Notes in Computer Science, vol 5199. Springer, Berlin, Heidelberg. <a href=https://doi.org/10.1007/978-3-540-87700-4_9>https://doi.org/10.1007/978-3-540-87700-4_9</a></p><p>[4] Lehre, P. K. (2011). Fitness-levels for non-elitist populations. In Genetic and Evolutionary Computation Conference, GECCO'11 (pp. 2075-2082) <a href=https://doi.org/10.1145/2001576.2001855>https://doi.org/10.1145/2001576.2001855</a></p><h1 id=footnotes>Footnotes<a href=#footnotes class=hanchor arialabel=Anchor>&#8983;</a> </h1><script>var hexagon=document.getElementById("hexagon"),convergence=document.getElementById("convergence_gif");console.log(convergence),hexagon.addEventListener("mouseenter",function(){hexagon.src="../hexagon/hexagon_solution.png";var e=new Audio("../../hex_shuffle.m4a");e.play()}),hexagon.addEventListener("mouseleave",function(){hexagon.src="../hexagon/hexagon_scrambled.png";var e=new Audio("../../hex_unshuffle.m4a");e.play()}),convergence.addEventListener("mouseenter",function(){convergence.src="../hexagon/convergence.gif"}),convergence.addEventListener("mouseleave",function(){convergence.src="../hexagon/convergence.png"})</script>
 <section class=footnotes role=doc-endnotes>
 <hr>
 <ol>
 <li id=fn:1 role=doc-endnote>
-<p>There exist better models for this, such as Artifical Fitness Levels (AFLs) [3] or Drift Analyis [4] - the Markov chain is used to simply to illustrate a point.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:2 role=doc-endnote>
-<p>From a later experiment, it was found that an elitist implimentation of the EA which never removed its top candidate performed worse than one that didn&rsquo;t. There are a few reasons for why I think this is. Firstly, our non-elitist algorithm allows for the same tile to be selected, i.e. a mutation with replacement that no impact on performance with a reasonable probablility. Top candidates, therefore, have a chance to be unaffected and placed back into the population as they were found. Modifying the EA so that it must swap tiles during mutation has a significantly worse impact on performance. It can be concluded that a blend of elitism and non-elitism gives a good exploration vs. exploitation tradeoff.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-<li id=fn:3 role=doc-endnote>
-<p>OneMax aims to find a binary string of all ones starting from a random binary string. Each mutation flips a bit at random. I&rsquo;ve already started this experiment, and the EA is very capable of solving OneMax. Given the correct parameters, the EA&rsquo;s performance on OneMax is essentially identical to the Hexagon puzzle! While the results are promising, this post has to wrap up somewhere.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p>
-</li>
-</ol>
-</section>
-</div></div>
-</div>
-</div>
-<footer class=footer , style=text-align:center>
+<p>There exist better models for this, such as Artifical Fitness Levels (AFLs) [3] or Drift Analyis [4] - the Markov chain is used to simply to illustrate a point.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote>
+<p>From a later experiment, it was found that an elitist implimentation of the EA which never removed its top candidate performed worse than one that didn&rsquo;t. There are a few reasons for why I think this is. Firstly, our non-elitist algorithm allows for the same tile to be selected, i.e. a mutation with replacement that no impact on performance with a reasonable probablility. Top candidates, therefore, have a chance to be unaffected and placed back into the population as they were found. Modifying the EA so that it must swap tiles during mutation has a significantly worse impact on performance. It can be concluded that a blend of elitism and non-elitism gives a good exploration vs. exploitation tradeoff.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote>
+<p>OneMax aims to find a binary string of all ones starting from a random binary string. Each mutation flips a bit at random. I&rsquo;ve already started this experiment, and the EA is very capable of solving OneMax. Given the correct parameters, the EA&rsquo;s performance on OneMax is essentially identical to the Hexagon puzzle! While the results are promising, this post has to wrap up somewhere.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div></div></div></div><footer class=footer , style=text-align:center>
 <div class=footer__inner>
 <div class=copyright>
 <span>© 2022 Powered by <a href=http://gohugo.io>Hugo</a></span>
 <span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span>
-</div>
-</div>
-</footer>
-<script src=https://srcassini.github.io/assets/main.js></script>
+</div></div></footer><script src=https://srcassini.github.io/assets/main.js></script>
 <script src=https://srcassini.github.io/assets/prism.js></script>
 <script type=text/javascript src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-</div>
-</body>
-</html>
+</div></body></html>
